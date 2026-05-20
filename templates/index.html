@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OldTV · 直播</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'&gt;&lt;rect width='64' height='64' rx='12' fill='%234a90ff'/&gt;&lt;text x='50%25' y='58%25' font-size='34' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' fill='white'&gt;TV&lt;/text&gt;&lt;/svg&gt;">
+  <!-- hls.js 通过国内 CDN（jsDelivr 镜像）加载 -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">📺 OldTV</div>
+    <input id="search" type="search" placeholder="搜索频道，例如 CCTV1 / 湖南卫视" />
+    <button id="refreshBtn" title="刷新频道列表">⟳ 刷新</button>
+  </header>
+
+  <nav id="tabs" class="tabs"></nav>
+
+  <main id="grid" class="grid" aria-live="polite">
+    <div class="hint">正在加载频道列表…</div>
+  </main>
+
+  <!-- 全屏播放器 -->
+  <div id="player" class="player hidden" role="dialog" aria-modal="true">
+    <div class="player-bar">
+      <span id="nowName" class="now-name"></span>
+      <span id="srcInfo" class="src-info"></span>
+      <div class="spacer"></div>
+      <button id="prevSrc"      title="上一源 (Alt+←)">◀ 源</button>
+      <button id="nextSrc"      title="下一源 (Alt+→)">源 ▶</button>
+      <button id="reloadStream" title="重新加载">⟳</button>
+      <button id="verifyBtn"    title="后端探测所有源是否可用">🩺 验证</button>
+      <button id="closePlayer"  title="关闭 (Esc)">✕</button>
+    </div>
+    <video id="video" controls autoplay playsinline></video>
+    <div id="streamMsg" class="stream-msg"></div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
