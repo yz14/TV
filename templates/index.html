@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OldTV · 直播</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'&gt;&lt;rect width='64' height='64' rx='12' fill='%234a90ff'/&gt;&lt;text x='50%25' y='58%25' font-size='34' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' fill='white'&gt;TV&lt;/text&gt;&lt;/svg&gt;">
   <!-- hls.js 通过国内 CDN（jsDelivr 镜像）加载 -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
 </head>
-<body>
+<body data-tv-theme="panda">
   <header class="topbar">
     <div class="brand">📺 OldTV</div>
     <input id="search" type="search" placeholder="搜索频道，例如 CCTV1 / 湖南卫视" />
@@ -22,20 +23,164 @@
     <div class="hint">正在加载频道列表…</div>
   </main>
 
-  <!-- 全屏播放器 -->
-  <div id="player" class="player hidden" role="dialog" aria-modal="true">
-    <div class="player-bar">
-      <span id="nowName" class="now-name"></span>
-      <span id="srcInfo" class="src-info"></span>
-      <div class="spacer"></div>
-      <button id="prevSrc"      title="上一源 (Alt+←)">◀ 源</button>
-      <button id="nextSrc"      title="下一源 (Alt+→)">源 ▶</button>
-      <button id="reloadStream" title="重新加载">⟳</button>
-      <button id="verifyBtn"    title="后端探测所有源是否可用">🩺 验证</button>
-      <button id="closePlayer"  title="关闭 (Esc)">✕</button>
+  <!-- 复古 CRT 电视机播放器 -->
+  <div id="player" class="player hidden" role="dialog" aria-modal="true" aria-label="复古电视机播放器">
+
+    <!-- 顶部浮动工具条：型号 / 特效 / 关闭 -->
+    <div class="player-toolbar">
+      <div class="theme-switcher" role="tablist" aria-label="电视机型号切换">
+        <button class="theme-btn" data-theme="classic"    role="tab" title="经典米色木质款 1970s">CLASSIC</button>
+        <button class="theme-btn" data-theme="panda"      role="tab" title="熊猫牌·木纹饰板 1990s">熊猫 PANDA</button>
+        <button class="theme-btn" data-theme="changhong"  role="tab" title="长虹牌·银灰金属 2000s">长虹 CHANGHONG</button>
+        <button class="theme-btn" data-theme="trinitron"  role="tab" title="Sony Trinitron 黑色高端">SONY TRINITRON</button>
+      </div>
+      <div class="fx-switcher" role="tablist" aria-label="CRT 显示特效">
+        <button class="fx-btn" data-fx="none"      role="tab" title="原画面，无任何滤镜">原画</button>
+        <button class="fx-btn" data-fx="crt"       role="tab" title="CRT 基础：扫描线 + 暗角 + 反光">CRT</button>
+        <button class="fx-btn" data-fx="scanlines" role="tab" title="强扫描线 + 阴罩">扫描线</button>
+        <button class="fx-btn" data-fx="phosphor"  role="tab" title="磷光 RGB 条纹 + 色散">磷光</button>
+        <button class="fx-btn" data-fx="snow"      role="tab" title="信号弱：雪花噪点">雪花</button>
+        <button class="fx-btn" data-fx="vcr"       role="tab" title="VCR：滚动同步条 + 色彩抖动">VCR</button>
+      </div>
+      <button id="exitPlayer" class="exit-btn" title="返回频道列表 (Esc)">✕ 返回</button>
     </div>
-    <video id="video" controls autoplay playsinline></video>
-    <div id="streamMsg" class="stream-msg"></div>
+
+    <div class="tv-stage">
+      <div class="tv-shell">
+
+        <!-- 顶部兔耳天线（PANDA / CLASSIC 主题才显示） -->
+        <div class="tv-antennae" aria-hidden="true">
+          <span class="rod rod-l"></span>
+          <span class="rod rod-r"></span>
+          <span class="rod-base"></span>
+        </div>
+
+        <!-- 电视机身 -->
+        <div class="tv-body">
+
+          <!-- 左上角品牌大铭牌（PANDA：熊猫 / CHANGHONG：长虹 / TRINITRON：SONY） -->
+          <div class="tv-brand-badge" aria-hidden="true">
+            <span class="badge-cn"></span>
+            <span class="badge-en"></span>
+          </div>
+
+          <!-- 左侧：屏幕区域。仅承载 video + CRT 视觉覆盖层；OSD/状态条已迁出到侧栏 -->
+          <div class="tv-screen-frame">
+            <div class="tv-screen" id="tvScreen">
+              <video id="video" controls autoplay playsinline></video>
+
+              <!-- CRT 视觉覆盖层（不拦截鼠标）；具体显隐由 body[data-tv-fx=...] 控制 -->
+              <div class="crt-base"     aria-hidden="true"></div>
+              <div class="crt-scan"     aria-hidden="true"></div>
+              <div class="crt-vignette" aria-hidden="true"></div>
+              <div class="crt-glare"    aria-hidden="true"></div>
+              <div class="crt-snow"     aria-hidden="true"></div>
+              <div class="crt-phosphor" aria-hidden="true"></div>
+              <div class="crt-roll"     aria-hidden="true"></div>
+              <div class="crt-bloom"    aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <!-- 屏幕下方（机身底沿）型号铭牌：相对 .tv-body 定位 -->
+          <div class="screen-nameplate" aria-hidden="true">
+            <span class="np-line">COLOR&nbsp;TELEVISION</span>
+            <span class="np-model">MODEL CRT-1998</span>
+          </div>
+
+          <!-- 右侧：控制面板 -->
+          <aside class="tv-sidepanel" aria-label="电视机控制面板">
+
+            <!-- 顶部铭牌（侧栏内） -->
+            <div class="brand-plate">
+              <span class="brand-name">OldTV</span>
+              <span class="brand-sub">COLOR · STEREO</span>
+            </div>
+
+            <!-- 频道信息显示器（原屏内 OSD 迁移） -->
+            <div class="ch-info" aria-label="当前频道与源">
+              <div class="ch-info-row">
+                <span class="ch-info-lbl">NOW</span>
+                <span id="nowName" class="now-name" title="">--</span>
+              </div>
+              <div class="ch-info-row">
+                <span class="ch-info-lbl">SRC</span>
+                <span id="srcInfo" class="src-info">--</span>
+              </div>
+            </div>
+
+            <!-- 频道号 LED 显示器（七段管风格） -->
+            <div class="ch-display" aria-label="当前频道号">
+              <span class="ch-prefix">CH</span>
+              <span id="chNum" class="ch-num">--</span>
+            </div>
+
+            <!-- 电源 LED -->
+            <div class="led-row">
+              <span class="led led-power" id="ledPower" aria-hidden="true"></span>
+              <span class="led-text">POWER</span>
+            </div>
+
+            <!-- 扬声器格栅 -->
+            <div class="speaker" aria-hidden="true"></div>
+
+            <!-- 旋钮组（PANDA 主题大旋钮；其他主题隐藏或缩小） -->
+            <div class="knob-cluster" aria-hidden="true">
+              <div class="knob knob-tuner" id="knobTuner" title="频道调谐">
+                <span class="knob-cap"></span>
+                <span class="knob-pointer"></span>
+                <span class="knob-label">TUNING</span>
+              </div>
+              <div class="knob knob-volume" title="音量">
+                <span class="knob-cap"></span>
+                <span class="knob-pointer"></span>
+                <span class="knob-label">VOLUME</span>
+              </div>
+            </div>
+
+            <!-- 物理按钮组：换台 + 换源 + 工具 -->
+            <div class="btn-cluster">
+              <!-- 第 1 行：换台 -->
+              <button id="prevCh" class="btn-phys btn-ch" title="上一台 (↑)">
+                <span class="btn-label">CH</span><span class="btn-glyph">▼</span>
+              </button>
+              <button id="nextCh" class="btn-phys btn-ch" title="下一台 (↓)">
+                <span class="btn-label">CH</span><span class="btn-glyph">▲</span>
+              </button>
+              <!-- 第 2 行：换源 -->
+              <button id="prevSrc" class="btn-phys btn-src" title="上一源 (Alt+←)">
+                <span class="btn-label">SRC</span><span class="btn-glyph">◀</span>
+              </button>
+              <button id="nextSrc" class="btn-phys btn-src" title="下一源 (Alt+→)">
+                <span class="btn-label">SRC</span><span class="btn-glyph">▶</span>
+              </button>
+              <!-- 第 3 行：工具 -->
+              <button id="reloadStream" class="btn-phys" title="重新加载本源">
+                <span class="btn-label">RELOAD</span><span class="btn-glyph">⟳</span>
+              </button>
+              <button id="verifyBtn" class="btn-phys" title="后端探测所有源是否可用">
+                <span class="btn-label">TEST</span><span class="btn-glyph">🩺</span>
+              </button>
+              <!-- 第 4 行：电源 (整行) -->
+              <button id="closePlayer" class="btn-phys btn-power" title="关闭 (Esc)">
+                <span class="btn-label">POWER</span><span class="btn-glyph">⏻</span>
+              </button>
+            </div>
+
+            <!-- 状态消息条（原屏内 stream-msg 迁移） -->
+            <div id="streamMsg" class="msg-strip" aria-live="polite"></div>
+
+            <div class="model-tag">MODEL&nbsp;CRT-1998</div>
+          </aside>
+        </div>
+
+        <!-- 底部脚架 -->
+        <div class="tv-feet" aria-hidden="true">
+          <span class="foot foot-l"></span>
+          <span class="foot foot-r"></span>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>

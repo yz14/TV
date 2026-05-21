@@ -1,5 +1,5 @@
 /* =========================================================
-   OldTV - Minimal Dark UI
+   OldTV - Minimal Dark UI  (网格列表页)
    ========================================================= */
 * { box-sizing: border-box; }
 html, body {
@@ -76,6 +76,7 @@ html, body {
   transition: transform .12s, border-color .15s, box-shadow .15s;
   text-align: center;
   min-height: 120px;
+  position: relative;
 }
 .card:hover {
   transform: translateY(-2px);
@@ -102,7 +103,6 @@ html, body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.card { position: relative; }
 .card .badge {
   position: absolute; top: 6px; right: 6px;
   background: rgba(74, 144, 255, 0.18);
@@ -114,55 +114,907 @@ html, body {
   font-weight: 600;
 }
 
-/* ---------- Player ---------- */
+/* =========================================================
+   Retro CRT TV Player —— 通用结构（不含主题色）
+   ---------------------------------------------------------
+   层次:
+     .player       -> 模态遮罩 (深色客厅背景)，铺满视口
+     .player-toolbar -> 顶部浮动工具条 (主题切换 / 返回)
+     .tv-stage     -> 居中容器，占满视口剩余区域
+     .tv-shell     -> 整台电视，按 ~1.55 比例自适应填满较短轴
+       .tv-antennae
+       .tv-body    -> 屏幕 + 右侧控制面板
+       .tv-feet
+   ========================================================= */
+
+:root {
+  /* —— 以下变量在 themes.css 中按主题覆盖 —— */
+  --tv-cream:     #d6c4a0;
+  --tv-cream-hi:  #ecdcb6;
+  --tv-cream-lo:  #b59f74;
+  --tv-cream-sh:  #6e5a36;
+  --tv-bezel:     #14110d;
+  --tv-bezel-hi:  #2a2520;
+  --tv-screen:    #000;
+  --tv-osd-yel:   #ffd54a;
+  --tv-led:       #ff3b30;
+  --tv-led-glow:  #ff5b50;
+  --tv-seam:      rgba(0,0,0,.28);
+  --tv-knob:      #2c2118;
+  --tv-knob-hi:   #5a4530;
+  --tv-knob-rim:  #0c0805;
+  --tv-grille:    #2b241a;
+  --tv-grille-hole:#0a0805;
+  --tv-btn-bg-hi: var(--tv-cream-hi);
+  --tv-btn-bg:    var(--tv-cream);
+  --tv-btn-bg-lo: var(--tv-cream-lo);
+  --tv-btn-text:  #1a140a;
+  --tv-btn-label: #5a4626;
+  --tv-brand-fg:  #e8d9b2;
+  --tv-trim:      transparent;     /* 木纹饰板背景, 主题覆盖 */
+  --tv-room-bg:   radial-gradient(ellipse at 50% 35%, #2a1d10 0%, #120a05 55%, #050302 100%);
+  --tv-shell-aspect: 1.55;         /* 整机宽高比 */
+}
+
+/* ---------- 模态遮罩 (客厅) ---------- */
 .player {
   position: fixed; inset: 0;
-  background: #000;
-  display: flex; flex-direction: column;
   z-index: 100;
+  display: flex; flex-direction: column;
+  background: var(--tv-room-bg);
 }
 .player.hidden { display: none; }
-.player-bar {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px;
-  background: rgba(0, 0, 0, 0.6);
-  position: absolute; top: 0; left: 0; right: 0;
-  z-index: 2;
-  opacity: 0;
-  transition: opacity .25s;
-}
-.player:hover .player-bar { opacity: 1; }
-.now-name { font-size: 15px; font-weight: 600; }
-.src-info {
-  font-size: 12px; color: #9aa3b3;
-  background: rgba(255,255,255,0.08);
-  padding: 3px 8px; border-radius: 4px;
-}
-.spacer { flex: 1; }
-.player-bar button {
-  background: rgba(255,255,255,0.1); color: #fff;
-  border: none; border-radius: 6px;
-  padding: 6px 12px; cursor: pointer; font-size: 13px;
-  transition: background .15s;
-}
-.player-bar button:hover:not(:disabled) { background: rgba(255,255,255,0.22); }
-.player-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-#video {
+/* ---------- 顶部工具条 ---------- */
+.player-toolbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 30;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  pointer-events: none;       /* 让中间区域可点透到 TV，按钮自己开 */
+}
+.player-toolbar > * { pointer-events: auto; }
+
+.theme-switcher {
+  display: flex; gap: 4px;
+  padding: 4px;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+}
+.theme-btn {
+  appearance: none; border: none; outline: none;
+  background: transparent; color: #c8cdd8;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 11px; letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.theme-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+.theme-btn.active {
+  background: linear-gradient(180deg, #4a90ff, #2569d6);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(74,144,255,.55);
+}
+.exit-btn {
+  appearance: none; border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.55); color: #f0e9d8;
+  font-family: "Consolas", monospace; font-size: 12px;
+  padding: 6px 12px; border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background .15s, color .15s, border-color .15s;
+}
+.exit-btn:hover { background: rgba(255,255,255,.10); color: #fff; border-color: rgba(255,255,255,.32); }
+
+/* ---------- 顶部 FX 切换器（CRT 特效）---------- */
+.player-toolbar { flex-wrap: wrap; row-gap: 8px; }
+.fx-switcher {
+  display: flex; gap: 2px;
+  padding: 4px;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+}
+.fx-btn {
+  appearance: none; border: none; outline: none;
+  background: transparent; color: #c8cdd8;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 11px; letter-spacing: 1px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.fx-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+.fx-btn.active {
+  background: linear-gradient(180deg, #ff8e3a, #d65826);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255,122,58,.55);
+}
+
+/* ---------- TV Stage（填满视口） ---------- */
+.tv-stage {
+  position: relative;
   flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  overflow: hidden;
+}
+/* 桌面椭圆暗影：让 TV "坐" 在桌面上 */
+.tv-stage::after {
+  content: "";
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(80vw, 1100px);
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,0,0,.55), transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- 整体外壳（始终撑满视口） ----------
+   说明: 早期版本按 --tv-shell-aspect 锁定机身比例，会在视口宽高比
+   小于机身比例时上下/左右留白。这里外壳直接 100vw x 100vh 撑满；
+   用 flex column 而非 grid 1fr，避免某些主题下天线/旋钮隐藏后
+   中间行无法正确撑开（grid 1fr 在 container-type:size 子项下的退化）。 */
+.tv-shell {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  z-index: 1;
+}
+.tv-shell > .tv-antennae,
+.tv-shell > .tv-feet { flex: 0 0 auto; }
+.tv-shell > .tv-body {
+  flex: 1 1 0;
+  min-height: 0;     /* 关键: 允许 flex item 收缩到内容高度以下 */
+  min-width: 0;
+}
+
+/* ---------- 天线（默认隐藏，主题里按需开启） ---------- */
+.tv-antennae {
+  position: relative;
+  width: 100%;
+  height: clamp(40px, 7vh, 80px);
+  display: none;            /* 默认隐藏，PANDA / CLASSIC 主题打开 */
+  justify-content: center;
+  align-self: end;
+  margin-bottom: -8px;
+}
+.tv-antennae .rod {
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #f1efe9 0%, #b6b1a4 40%, #6a6558 100%);
+  box-shadow: 0 1px 1px rgba(0,0,0,.5);
+  transform-origin: bottom center;
+}
+.tv-antennae .rod-l { transform: rotate(-26deg) translateX(-26px); }
+.tv-antennae .rod-r { transform: rotate( 26deg) translateX( 26px); }
+.tv-antennae .rod::after {
+  content: ""; position: absolute; top: -6px; left: -3px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff, #888 60%, #444);
+}
+.tv-antennae .rod-base {
+  position: absolute; bottom: 0;
+  width: 38px; height: 14px;
+  background: linear-gradient(180deg, var(--tv-cream-hi), var(--tv-cream-lo));
+  border-radius: 6px 6px 4px 4px;
+  box-shadow: inset 0 -2px 3px rgba(0,0,0,.25), 0 2px 3px rgba(0,0,0,.4);
+}
+
+/* ---------- 机身 ---------- */
+.tv-body {
+  position: relative;
+  width: 100%; height: 100%;
+  /* 用 flex 而非 grid: 保证屏幕区在所有主题下都撑满机身高度
+     (grid 单行 auto 高度会受 sidepanel 内容多少影响，导致 trinitron/
+      changhong 因为无旋钮而高度塌缩) */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: clamp(8px, 1.4vw, 22px);
+  padding: clamp(10px, 1.8vw, 26px);
+  border-radius: clamp(8px, 1.4vw, 20px);
+  /* 默认米色塑料外壳 */
+  background:
+    radial-gradient(ellipse at 30% 0%, var(--tv-cream-hi) 0%, var(--tv-cream) 35%, var(--tv-cream-lo) 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.45),
+    inset 0 -3px 0 rgba(0,0,0,.22),
+    inset 0 0 0 2px rgba(0,0,0,.06),
+    0 18px 40px rgba(0,0,0,.55);
+}
+/* 机身塑料噪点纹理 */
+.tv-body::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: .55;
+}
+/* 机身水平拼缝 (下分割线) */
+.tv-body::after {
+  content: "";
+  position: absolute;
+  left: 8%; right: 8%; bottom: 0;
+  height: 1px;
+  background: var(--tv-seam);
+  border-radius: 1px;
+}
+
+/* ---------- 屏幕区域：屏幕 (4:3，自适应居中) ---------- */
+.tv-screen-frame {
+  position: relative;
+  /* 作为 .tv-body 的 flex item 撑满主轴剩余空间 */
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0; min-height: 0;
+  border-radius: clamp(8px, 1.2vw, 18px);
+  padding: clamp(8px, 1.4vw, 22px);
+  background: linear-gradient(180deg, #1d1a16 0%, #0c0a07 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,.06),
+    inset 0 -2px 4px rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(0,0,0,.5),
+    0 4px 10px rgba(0,0,0,.45);
+  /* 用 container query 单位让屏幕双向受限 */
+  container-type: size;
+  container-name: screenframe;
+}
+.tv-screen {
+  position: relative;
+  /* 画面宽高比：JS 在 loadedmetadata 时从视频 videoWidth/Height 覆写 --vid-w / --vid-h */
+  --vid-w: 4;
+  --vid-h: 3;
+  /* 双向受容器限制，保证画面按真实 aspect 填满屏幕，不产生内部黑边 */
+  width:  min(100cqw, calc(100cqh * var(--vid-w) / var(--vid-h)));
+  height: min(100cqh, calc(100cqw * var(--vid-h) / var(--vid-w)));
+  background: #000;
+  border-radius: clamp(10px, 2vw, 26px) / clamp(8px, 1.5vw, 20px);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 2px #000,
+    inset 0 0 18px rgba(0,0,0,.9),
+    inset 0 0 60px rgba(0,0,0,.55),
+    0 0 0 3px #2b2620,
+    0 0 0 5px #0a0908;
+  /* 位于中心 */
+  margin: auto;
+}
+.tv-screen > video {
+  position: absolute; inset: 0;
   width: 100%; height: 100%;
   background: #000;
-  object-fit: contain;
+  /* aspect 由上层容器控制，这里 fill 可保证画面贴满不产生内部黑边 */
+  object-fit: fill;
+  filter: saturate(1.05) contrast(1.02);
+  transition: filter .25s ease;
 }
-.stream-msg {
-  position: absolute; bottom: 80px; left: 50%;
+/* 屏幕容器充满子元素的布局辅助 */
+.tv-screen-frame { display: flex; }
+
+/* =========================================================
+   CRT 视觉覆盖层
+   ---------------------------------------------------------
+   默认都 opacity:0；由 body[data-tv-fx="..."] 控制具体显隐
+   6 个档位 (顶栏 fx-switcher 一一对应):
+     none      -> 全部关（原画）
+     crt       -> base + scan(弱) + vignette + glare
+     scanlines -> base + scan(强) + vignette + glare
+     phosphor  -> base + phosphor RGB 条纹 + 色散
+     snow      -> base + snow 雪花动画 + 轻微失祲
+     vcr       -> base + roll 同步条 + jitter + 色散
+   ========================================================= */
+.crt-base, .crt-scan, .crt-vignette, .crt-glare,
+.crt-snow, .crt-phosphor, .crt-roll, .crt-bloom {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+/* base: 轻微反差与色差，所有启用档都使用 */
+.crt-base {
+  background:
+    radial-gradient(ellipse at center, rgba(255,255,255,.02), transparent 70%);
+  z-index: 2;
+}
+.crt-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0)    0px,
+    rgba(0,0,0,0)    2px,
+    rgba(0,0,0,.22)  3px,
+    rgba(0,0,0,.22)  3px
+  );
+  mix-blend-mode: multiply;
+  z-index: 3;
+}
+.crt-vignette {
+  background:
+    radial-gradient(ellipse at center,
+      transparent 55%,
+      rgba(0,0,0,.35) 78%,
+      rgba(0,0,0,.78) 100%);
+  z-index: 4;
+}
+.crt-glare {
+  background:
+    radial-gradient(ellipse 60% 35% at 22% 14%, rgba(255,255,255,.18), transparent 70%),
+    radial-gradient(ellipse 35% 25% at 80% 90%, rgba(255,255,255,.05), transparent 70%);
+  z-index: 5;
+}
+/* 雪花噪点：SVG 程序生成的 fractalNoise */
+.crt-snow {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='2.6' numOctaves='3' stitchTiles='stitch' seed='5'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.85 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+  mix-blend-mode: screen;
+  z-index: 6;
+  animation: crtSnowShift .12s steps(6) infinite;
+}
+@keyframes crtSnowShift {
+  0%   { background-position:   0    0; }
+  20%  { background-position: -40px  20px; }
+  40%  { background-position:  30px -50px; }
+  60%  { background-position: -60px -10px; }
+  80%  { background-position:  20px  40px; }
+  100% { background-position: -10px -30px; }
+}
+/* 磷光 RGB 阴罩条纹 */
+.crt-phosphor {
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgba(255, 30, 30,.18) 0,
+      rgba(255, 30, 30,.18) 1px,
+      rgba( 30,255, 30,.18) 1px,
+      rgba( 30,255, 30,.18) 2px,
+      rgba( 30, 80,255,.18) 2px,
+      rgba( 30, 80,255,.18) 3px);
+  mix-blend-mode: screen;
+  z-index: 6;
+}
+/* VCR 滚动同步条：从上到下滚动一条亮带 */
+.crt-roll {
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(255,255,255,.04) 35%,
+    rgba(255,255,255,.18) 50%,
+    rgba(255,255,255,.04) 65%,
+    transparent 100%);
+  height: 28%;
+  mix-blend-mode: screen;
+  z-index: 7;
+  /* 默认隐藏在顶部上方 */
+  top: -28%;
+}
+@keyframes crtRoll {
+  0%   { top: -28%; }
+  100% { top: 100%; }
+}
+/* 整体辉光/色差包裹 */
+.crt-bloom {
+  box-shadow: inset 0 0 80px rgba(120,200,255,.06);
+  z-index: 1;
+}
+
+/* ---------- fx 档位控制 ---------- */
+/* none: 默认全关（全部 opacity:0） */
+body[data-tv-fx="crt"]       .crt-base,
+body[data-tv-fx="crt"]       .crt-vignette,
+body[data-tv-fx="crt"]       .crt-glare,
+body[data-tv-fx="crt"]       .crt-bloom    { opacity: 1; }
+body[data-tv-fx="crt"]       .crt-scan     { opacity: .55; }
+
+body[data-tv-fx="scanlines"] .crt-base,
+body[data-tv-fx="scanlines"] .crt-vignette,
+body[data-tv-fx="scanlines"] .crt-glare,
+body[data-tv-fx="scanlines"] .crt-bloom    { opacity: 1; }
+body[data-tv-fx="scanlines"] .crt-scan     { opacity: 1; }
+body[data-tv-fx="scanlines"] .tv-screen > video { filter: saturate(1.1) contrast(1.08) brightness(1.02); }
+
+body[data-tv-fx="phosphor"]  .crt-base,
+body[data-tv-fx="phosphor"]  .crt-vignette,
+body[data-tv-fx="phosphor"]  .crt-bloom    { opacity: 1; }
+body[data-tv-fx="phosphor"]  .crt-phosphor { opacity: .8; }
+body[data-tv-fx="phosphor"]  .crt-scan     { opacity: .35; }
+body[data-tv-fx="phosphor"]  .tv-screen > video {
+  filter:
+    saturate(1.5) contrast(1.12) brightness(1.04)
+    drop-shadow(-1px 0 0 rgba(255,30,30,.5))
+    drop-shadow( 1px 0 0 rgba(30,255,255,.45));
+}
+
+body[data-tv-fx="snow"]      .crt-base,
+body[data-tv-fx="snow"]      .crt-vignette,
+body[data-tv-fx="snow"]      .crt-glare    { opacity: 1; }
+body[data-tv-fx="snow"]      .crt-scan     { opacity: .45; }
+body[data-tv-fx="snow"]      .crt-snow     { opacity: .55; }
+body[data-tv-fx="snow"]      .tv-screen > video {
+  filter: saturate(.7) contrast(.92) brightness(.96);
+}
+
+body[data-tv-fx="vcr"]       .crt-base,
+body[data-tv-fx="vcr"]       .crt-vignette,
+body[data-tv-fx="vcr"]       .crt-glare,
+body[data-tv-fx="vcr"]       .crt-bloom    { opacity: 1; }
+body[data-tv-fx="vcr"]       .crt-scan     { opacity: .55; }
+body[data-tv-fx="vcr"]       .crt-roll     { opacity: 1; animation: crtRoll 6.5s linear infinite; }
+body[data-tv-fx="vcr"]       .tv-screen > video {
+  filter:
+    saturate(.88) contrast(.96) brightness(1.02) blur(.35px)
+    drop-shadow(-1.4px 0 0 rgba(255,30,30,.45))
+    drop-shadow( 1.4px 0 0 rgba(30,255,255,.4));
+  animation: crtVcrJitter .22s steps(2) infinite;
+}
+@keyframes crtVcrJitter {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(.7px); }
+  100% { transform: translateX(-.7px); }
+}
+
+/* ---------- 型号铭牌：贴 tv-body 底部居中 ---------- */
+.screen-nameplate {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(2px, .5vh, 8px);
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.7); color: #fff;
-  padding: 10px 20px; border-radius: 8px;
-  font-size: 14px;
-  display: none;
+  z-index: 2;
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 2px 12px;
+  border-radius: 4px;
+  background: rgba(0,0,0,.32);
+  font-family: "Consolas", monospace;
+  color: var(--tv-brand-fg);
+  letter-spacing: 2px;
+  pointer-events: none;
+  white-space: nowrap;
 }
-.stream-msg.show { display: block; }
+.screen-nameplate .np-line {
+  font-size: clamp(7px, .8vw, 11px);
+  font-weight: 700;
+}
+.screen-nameplate .np-model {
+  font-size: clamp(6px, .7vw, 10px);
+  opacity: .75;
+}
+
+/* =========================================================
+   侧栏 OSD（已从屏内迁出）
+   ---------------------------------------------------------
+   .ch-info     -> NOW + SRC 频道信息显示器（磷光字幕风格）
+   .msg-strip   -> 状态消息条（失败/重试/验证结果）
+   ========================================================= */
+.ch-info {
+  display: flex; flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #1d150a 0%, #0a0703 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,.8),
+    inset 0 -1px 0 rgba(255,255,255,.05),
+    0 1px 2px rgba(0,0,0,.4);
+  font-family: "Consolas", "Courier New", monospace;
+}
+.ch-info-row {
+  display: flex; align-items: baseline; gap: 6px;
+  min-width: 0;
+}
+.ch-info-lbl {
+  flex: 0 0 auto;
+  font-size: clamp(7px, .7vw, 9px);
+  letter-spacing: 1.5px;
+  color: var(--tv-osd-yel);
+  opacity: .65;
+}
+.ch-info .now-name {
+  flex: 1 1 0; min-width: 0;
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 700;
+  color: var(--tv-osd-yel);
+  text-shadow: 0 0 6px rgba(255,213,74,.55), 0 1px 0 #000;
+  letter-spacing: .5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ch-info .src-info {
+  flex: 1 1 0; min-width: 0;
+  font-size: clamp(9px, .9vw, 12px);
+  color: var(--tv-osd-yel);
+  opacity: .9;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(255,213,74,.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msg-strip {
+  display: none;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: clamp(9px, .85vw, 11px);
+  line-height: 1.35;
+  color: #f0eada;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(0,0,0,.6);
+  border: 1px solid rgba(255,213,74,.35);
+  text-shadow: 0 0 4px rgba(255,213,74,.4);
+  max-height: 7em;
+  overflow: hidden;
+  word-break: break-all;
+}
+.msg-strip.show { display: block; }
+
+/* ---------- 品牌大铭牌（机身左上角，主题里启用并改字） ---------- */
+.tv-brand-badge {
+  position: absolute;
+  top: clamp(4px, 0.8vw, 10px);
+  left: clamp(12px, 2vw, 28px);
+  z-index: 2;
+  display: none;
+  flex-direction: column;
+  font-family: "Georgia", "Times New Roman", serif;
+  pointer-events: none;
+  user-select: none;
+}
+.tv-brand-badge .badge-cn {
+  font-size: clamp(12px, 1.3vw, 18px);
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #2a1f10;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45), 0 -1px 0 rgba(0,0,0,.25);
+}
+.tv-brand-badge .badge-en {
+  font-size: clamp(9px, .9vw, 12px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: #4a3820;
+  margin-top: 2px;
+}
+
+/* ---------- 右侧控制面板 ---------- */
+.tv-sidepanel {
+  position: relative;
+  /* 作为 .tv-body 的 flex item: 固定宽度，垂直撑满 */
+  flex: 0 0 clamp(150px, 19%, 230px);
+  display: flex; flex-direction: column;
+  align-items: stretch;
+  gap: clamp(6px, 1vh, 12px);
+  padding: clamp(6px, 1vw, 14px) clamp(6px, .8vw, 12px);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.10) 0%,
+      rgba(0,0,0,.10) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -2px 3px rgba(0,0,0,.18);
+  overflow: hidden;
+}
+
+/* 铭牌 (侧栏内) */
+.brand-plate {
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 6px 6px 8px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #2a241c 0%, #110d08 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -1px 2px rgba(0,0,0,.6),
+    0 2px 3px rgba(0,0,0,.35);
+}
+.brand-name {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(14px, 1.5vw, 20px);
+  letter-spacing: 1px;
+  color: var(--tv-brand-fg);
+  text-shadow: 0 1px 0 rgba(0,0,0,.7), 0 0 8px rgba(255,213,140,.25);
+}
+.brand-sub {
+  font-family: "Consolas", monospace;
+  font-size: clamp(7px, .75vw, 10px);
+  letter-spacing: 2px;
+  color: #b9a981;
+  margin-top: 2px;
+}
+
+/* ---------- 频道号 LED 显示器（七段管风格） ---------- */
+.ch-display {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #050300 0%, #1a0d00 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.85),
+    inset 0 -1px 0 rgba(255,255,255,.04),
+    0 1px 2px rgba(0,0,0,.4);
+}
+.ch-display .ch-prefix {
+  font-family: "Consolas", monospace;
+  font-size: clamp(8px, .8vw, 10px);
+  letter-spacing: 1.5px;
+  color: #ff6a3d;
+  opacity: .75;
+}
+.ch-display .ch-num {
+  font-family: "DS-Digital", "Consolas", "Courier New", monospace;
+  font-weight: 700;
+  font-size: clamp(18px, 1.9vw, 26px);
+  letter-spacing: 2px;
+  color: #ff7a3a;
+  text-shadow:
+    0 0 6px rgba(255,90,40,.85),
+    0 0 14px rgba(255,90,40,.45);
+  min-width: 2.2ch;
+  text-align: center;
+}
+
+/* 电源 LED */
+.led-row {
+  display: flex; align-items: center; gap: 8px;
+  justify-content: center;
+  padding: 2px 0;
+}
+.led {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--tv-led-glow), var(--tv-led) 60%, #2a0500 100%);
+  box-shadow:
+    0 0 6px var(--tv-led),
+    0 0 12px rgba(255,59,48,.55),
+    inset 0 -1px 1px rgba(0,0,0,.5);
+  animation: ledPulse 2.4s ease-in-out infinite;
+}
+@keyframes ledPulse {
+  0%, 100% { filter: brightness(.92); }
+  50%      { filter: brightness(1.12); }
+}
+.led-text {
+  font-family: "Consolas", monospace;
+  font-size: clamp(8px, .8vw, 10px);
+  letter-spacing: 1.5px;
+  color: #4a3d22;
+  text-shadow: 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* 喇叭格栅 (大圆孔扬声器) */
+.speaker {
+  flex: 1 0 auto;
+  min-height: 50px;
+  border-radius: 8px;
+  background-color: var(--tv-grille);
+  background-image:
+    radial-gradient(circle at center, var(--tv-grille-hole) 22%, transparent 23%);
+  background-size: 10px 10px;
+  background-position: 0 0;
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,.6),
+    inset 0 -1px 0 rgba(255,255,255,.06);
+}
+
+/* ---------- 旋钮组 (默认隐藏；PANDA 主题启用) ---------- */
+.knob-cluster {
+  display: none;
+  gap: 10px;
+  justify-content: space-around;
+  padding: 6px 0;
+}
+.knob {
+  --knob-size: clamp(36px, 4.4vw, 56px);
+  width: var(--knob-size);
+  height: var(--knob-size);
+  position: relative;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, var(--tv-knob-hi) 0%, var(--tv-knob) 55%, #0d0905 100%);
+  box-shadow:
+    0 0 0 2px var(--tv-knob-rim),
+    inset 0 2px 2px rgba(255,255,255,.18),
+    inset 0 -3px 4px rgba(0,0,0,.55),
+    0 2px 4px rgba(0,0,0,.55);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.knob .knob-cap {
+  position: absolute; inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6b5235, #2c2118 70%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.18),
+    inset 0 -1px 2px rgba(0,0,0,.6);
+}
+.knob .knob-pointer {
+  position: absolute;
+  top: 8%; left: 50%;
+  width: 3px; height: 32%;
+  background: #f5e6c5;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 3px rgba(255,230,180,.5);
+}
+.knob .knob-label {
+  position: absolute;
+  bottom: -14px; left: 50%;
+  transform: translateX(-50%);
+  font-family: "Consolas", monospace;
+  font-size: 8px; letter-spacing: 1.5px;
+  color: var(--tv-btn-label);
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* 物理按钮组 */
+.btn-cluster {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+.btn-phys {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1px;
+  min-height: 34px;
+  padding: 3px 4px;
+  font-family: "Consolas", monospace;
+  color: var(--tv-btn-text);
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background:
+    linear-gradient(180deg, var(--tv-btn-bg-hi) 0%, var(--tv-btn-bg) 50%, var(--tv-btn-bg-lo) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -2px 0 rgba(0,0,0,.18),
+    0 2px 3px rgba(0,0,0,.35);
+  transition: transform .06s ease, box-shadow .06s ease, filter .12s;
+}
+.btn-phys:hover:not(:disabled) { filter: brightness(1.05); }
+.btn-phys:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.3),
+    inset 0 2px 3px rgba(0,0,0,.3),
+    0 1px 0 rgba(0,0,0,.25);
+}
+.btn-phys:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+.btn-phys .btn-label {
+  font-size: clamp(7px, .7vw, 9px);
+  letter-spacing: 1.2px;
+  color: var(--tv-btn-label);
+  line-height: 1;
+}
+.btn-phys .btn-glyph {
+  font-size: clamp(10px, 1vw, 14px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tv-btn-text);
+}
+/* CH 按钮：突出（更亮） */
+.btn-phys.btn-ch {
+  background:
+    linear-gradient(180deg, #ffe1a7 0%, #e9c581 50%, #b59559 100%);
+}
+/* SRC 按钮：稍暗，与 CH 形成视觉分组 */
+.btn-phys.btn-src {
+  background:
+    linear-gradient(180deg, #c9b58a 0%, #a8946a 50%, #7b6948 100%);
+}
+.btn-phys.btn-src .btn-label,
+.btn-phys.btn-src .btn-glyph { color: #1d150a; }
+
+/* 电源按钮：红色加大占满底部一行 */
+.btn-phys.btn-power {
+  grid-column: 1 / -1;
+  min-height: 42px;
+  background:
+    linear-gradient(180deg, #ff7a72 0%, #d63a31 55%, #8a1d16 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.45),
+    inset 0 -2px 0 rgba(0,0,0,.35),
+    0 2px 4px rgba(0,0,0,.4),
+    0 0 10px rgba(255,80,70,.25);
+}
+.btn-phys.btn-power .btn-label { color: rgba(255,255,255,.85); }
+.btn-phys.btn-power .btn-glyph { color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.45); }
+
+/* 型号小标签 */
+.model-tag {
+  margin-top: 2px;
+  text-align: center;
+  font-family: "Consolas", monospace;
+  font-size: clamp(7px, .75vw, 10px);
+  letter-spacing: 2px;
+  color: var(--tv-btn-label);
+  text-shadow: 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* ---------- 脚架 ---------- */
+.tv-feet {
+  position: relative;
+  width: 78%;
+  margin: 0 auto;
+  height: clamp(12px, 1.6vh, 18px);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 6%;
+}
+.tv-feet .foot {
+  width: 22%;
+  height: 100%;
+  border-radius: 0 0 10px 10px;
+  background: linear-gradient(180deg, var(--tv-cream-lo), var(--tv-cream-sh));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 4px 6px rgba(0,0,0,.45);
+}
+
+/* 窄屏下 theme/fx 按钮只显示主名 */
+@media (max-width: 900px) {
+  .theme-btn { padding: 6px 8px; font-size: 10px; letter-spacing: .5px; }
+  .fx-btn    { padding: 6px 8px; font-size: 10px; letter-spacing: .5px; }
+}
+
+/* ---------- 窄屏适配 ---------- */
+@media (max-width: 720px) {
+  .tv-body {
+    /* 手机竖屏: 屏幕在上, 控制面板在下 */
+    flex-direction: column;
+  }
+  .tv-screen-frame { flex: 1 1 0; }
+  .tv-sidepanel {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .ch-display { flex: 0 0 auto; }
+  .speaker { flex: 1 1 80px; min-height: 32px; }
+  .btn-cluster { flex: 1 1 100%; grid-template-columns: repeat(7, 1fr); }
+  .btn-phys.btn-power { grid-column: auto; min-height: 34px; }
+  .brand-plate { flex: 0 0 auto; padding: 6px 10px; }
+  .led-row { flex: 0 0 auto; }
+  .model-tag { display: none; }
+  .tv-brand-badge { display: none !important; }
+  .knob-cluster { display: none !important; }
+  .screen-nameplate { display: none; }
+  .ch-info  { flex: 1 1 100%; }
+  .msg-strip { flex: 1 1 100%; }
+}
 
 /* ---------- Scrollbar ---------- */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
