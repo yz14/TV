@@ -1,11 +1,11 @@
-/* =========================================================
+﻿/* =========================================================
    OldTV - 主题包 (Themes)
    ---------------------------------------------------------
    通过 body[data-tv-theme="..."] 切换:
      - classic   : 经典米色款 (默认风格强化)
      - panda     : 熊猫牌 1990s 木纹饰板 + 大旋钮
      - changhong : 长虹牌 1990s 末-2000s 银灰金属面板
-     - trinitron : Sony Trinitron 黑色高端纯平
+     - trinitron : Sony Watchman FD-280 便携黑白电视机 (1990s)
    ========================================================= */
 
 
@@ -254,133 +254,8 @@ body[data-tv-theme="changhong"] .tv-feet .foot {
 
 
 /* =========================================================
-   4) TRINITRON —— Sony Trinitron 黑色高端纯平
-   1990s 末-2000s 旗舰 (参考 KV-29 / WEGA 系列)
+   4) TRINITRON —— 见文件末尾完整实现 (90s 索尼便携黑白机 Watchman FD-280 蓝本)
    ========================================================= */
-body[data-tv-theme="trinitron"] {
-  --tv-cream:     #1a1c1f;
-  --tv-cream-hi:  #2c2f33;
-  --tv-cream-lo:  #0a0b0d;
-  --tv-cream-sh:  #050606;
-  --tv-grille:    #0a0b0d;
-  --tv-grille-hole:#000000;
-  --tv-led:       #2f7dff;
-  --tv-led-glow:  #66a3ff;
-  --tv-brand-fg:  #e7e9ec;
-  --tv-btn-bg-hi: #44494f;
-  --tv-btn-bg:    #2a2d31;
-  --tv-btn-bg-lo: #16181b;
-  --tv-btn-text:  #e7e9ec;
-  --tv-btn-label: #a8b0ba;
-  --tv-room-bg:   radial-gradient(ellipse at 50% 35%, #1c1c20 0%, #060607 60%, #000 100%);
-  --tv-shell-aspect: 1.7;       /* WEGA 是 16:9 倾向，整机更宽 */
-}
-body[data-tv-theme="trinitron"] .tv-antennae { display: none; }
-body[data-tv-theme="trinitron"] .knob-cluster { display: none; }
-/* 机身: 哑光黑塑料 + 微细微金属反光 */
-body[data-tv-theme="trinitron"] .tv-body {
-  background:
-    radial-gradient(ellipse at 30% 0%, #2c2f33 0%, #1a1c1f 35%, #0a0b0d 100%);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.12),
-    inset 0 -3px 0 rgba(0,0,0,.6),
-    inset 0 0 0 2px rgba(255,255,255,.04),
-    0 18px 40px rgba(0,0,0,.75);
-}
-body[data-tv-theme="trinitron"] .tv-body::before { opacity: .35; }
-/* 屏框: 与机身一体黑 */
-body[data-tv-theme="trinitron"] .tv-screen-frame {
-  background: linear-gradient(180deg, #0a0b0d 0%, #000 100%);
-}
-/* Trinitron 标志性细节: 屏幕底部细横纹理(阴罩线)由 CSS 模拟 */
-body[data-tv-theme="trinitron"] .tv-screen {
-  border-radius: clamp(4px, .8vw, 10px) / clamp(4px, .6vw, 8px);
-}
-/* 控制面板：嵌在机身右侧，黑色 */
-body[data-tv-theme="trinitron"] .tv-sidepanel {
-  background: linear-gradient(180deg, #25282c 0%, #0c0d0f 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    inset 0 -2px 4px rgba(0,0,0,.6),
-    0 2px 4px rgba(0,0,0,.45);
-}
-body[data-tv-theme="trinitron"] .brand-plate {
-  background: linear-gradient(180deg, #2c2f33 0%, #0a0b0d 100%);
-}
-body[data-tv-theme="trinitron"] .brand-name {
-  color: #f0f2f5;
-  font-style: normal;
-  letter-spacing: 3px;
-  text-shadow: 0 1px 0 rgba(0,0,0,.7);
-}
-body[data-tv-theme="trinitron"] .brand-sub { color: #8a9099; }
-body[data-tv-theme="trinitron"] .led-text { color: #8a9099; text-shadow: 0 1px 0 rgba(0,0,0,.4); }
-body[data-tv-theme="trinitron"] .model-tag { color: #5a6068; text-shadow: 0 1px 0 rgba(0,0,0,.5); }
-body[data-tv-theme="trinitron"] .ch-display {
-  background: linear-gradient(180deg, #000 0%, #020308 100%);
-}
-body[data-tv-theme="trinitron"] .ch-display .ch-num {
-  color: #5bbcff;
-  text-shadow: 0 0 6px rgba(91,188,255,.85), 0 0 14px rgba(91,188,255,.45);
-}
-body[data-tv-theme="trinitron"] .ch-display .ch-prefix { color: #5bbcff; opacity: .7; }
-/* ch-info: 黑底蓝光 */
-body[data-tv-theme="trinitron"] .ch-info {
-  background: linear-gradient(180deg, #000 0%, #02060a 100%);
-}
-body[data-tv-theme="trinitron"] .ch-info .ch-info-lbl,
-body[data-tv-theme="trinitron"] .ch-info .now-name,
-body[data-tv-theme="trinitron"] .ch-info .src-info {
-  color: #5bbcff;
-  text-shadow: 0 0 6px rgba(91,188,255,.6), 0 1px 0 #000;
-}
-body[data-tv-theme="trinitron"] .msg-strip {
-  background: rgba(0,0,0,.75);
-  border-color: rgba(91,188,255,.4);
-  color: #cfe4ff;
-  text-shadow: 0 0 4px rgba(91,188,255,.4);
-}
-/* 大铭牌：SONY (大写银字) */
-body[data-tv-theme="trinitron"] .tv-brand-badge { display: flex; }
-body[data-tv-theme="trinitron"] .tv-brand-badge .badge-cn::before {
-  content: "SONY";
-  font-family: "Helvetica", "Arial", sans-serif;
-  font-weight: 800;
-  font-style: normal;
-  letter-spacing: 6px;
-  color: #eaecef;
-  text-shadow: 0 1px 0 rgba(0,0,0,.7), 0 -1px 0 rgba(255,255,255,.10);
-}
-body[data-tv-theme="trinitron"] .tv-brand-badge .badge-en::before {
-  content: "TRINITRON · WEGA";
-  color: #9aa0a8;
-  letter-spacing: 4px;
-}
-/* 按钮：哑光黑 */
-body[data-tv-theme="trinitron"] .btn-phys {
-  background: linear-gradient(180deg, #44494f 0%, #2a2d31 50%, #16181b 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.18),
-    inset 0 -2px 0 rgba(0,0,0,.5),
-    0 2px 3px rgba(0,0,0,.5);
-}
-body[data-tv-theme="trinitron"] .btn-phys .btn-glyph { color: #f0f2f5; }
-body[data-tv-theme="trinitron"] .btn-phys .btn-label { color: #a8b0ba; }
-body[data-tv-theme="trinitron"] .btn-phys.btn-ch {
-  background: linear-gradient(180deg, #4a525c 0%, #2a2f36 60%, #14171c 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.22),
-    inset 0 -2px 0 rgba(0,0,0,.5),
-    0 0 8px rgba(91,188,255,.18);
-}
-body[data-tv-theme="trinitron"] .btn-phys.btn-src {
-  background: linear-gradient(180deg, #34383d 0%, #1f2226 60%, #0c0d0f 100%);
-}
-/* 屏下铭牌（Round 2 已重定义为 Trinitron 红字角标，见文件末尾） */
-/* 脚架：跟机身同色 */
-body[data-tv-theme="trinitron"] .tv-feet .foot {
-  background: linear-gradient(180deg, #1a1c1f, #050606);
-}
 
 
 /* =========================================================
@@ -757,215 +632,747 @@ body[data-tv-theme="changhong"] .tv-sidepanel::after {
   pointer-events: none;
 }
 
+/* =============================================================
+   4) TRINITRON · 90 年代 Sony 便携黑白电视机 (Watchman FD-280 蓝本)
+   -------------------------------------------------------------
+   重新设计 / 调研依据 (1989-1994 实机):
+     - Sony Watchman FD-280 / FD-285  (charcoal portable B/W)
+     - Sony FD-510 / KV-9 系列         (kitchen B/W CRT)
+     - 同期 Sony 便携黑白 ABS 注塑外观共通特征
+   设计要点:
+     - 机身    : 炭灰 (charcoal #2a2c30) 磨砂 ABS, 略带冷调
+     - 形态    : 矮宽便携, 顶部一体提手, 单根伸缩天线斜向右上
+     - 屏框    : 极厚一体黑塑料, 屏管明显小于机身正面
+     - 屏管    : 单色 P4 phosphor (冷白偏蓝绿), 强 vignette
+                 视频用 grayscale + hue-rotate 染色为单色 CRT
+     - 顶铭牌  : 屏左上 "SONY" 银色金属凸印 (Helvetica Black)
+     - 屏下铭牌: 左 "MODEL FD-280 / MONOCHROME"
+                 右 红色斜体 "Watchman"
+     - 侧栏    : 顶部 旋转调台盘 + VHF/UHF 牌 + 红 LED
+                 中部 垂直长条喇叭格栅
+                 底部 BRIGHT / VOLUME 拇指轮 + 黑塑按键
+     - 脚架    : 极矮黑塑垫脚
+   ============================================================= */
 
-/* ---------------------------------------------------------
-   4) TRINITRON · 1990末 Sony KV-29 CRT 旗舰 (重做：厚塑料 + 侧喇叭)
-       - 恢复传统侧栏布局 (默认右侧, 但比常规更厚: 主体感)
-       - 屏框超厚黑塑料 + 两侧纵向喇叭格栅
-       - 屏正上方居中: SONY 银色凸印大字
-       - 屏框右下角: Trinitron 红色标志 (iconic)
-       - 屏下: IR 接收窗 + 红色电源 LED
---------------------------------------------------------- */
-body[data-tv-theme="trinitron"] .tv-body {
-  padding: clamp(10px, 1.5vw, 22px);
-  gap: clamp(6px, 1vw, 12px);
-  position: relative;
+
+/* —— 主题变量 ———————————————————————————————————————— */
+body[data-tv-theme="trinitron"] {
+  --tv-cream:      #2a2c30;          /* 主炭灰塑料 */
+  --tv-cream-hi:   #3a3d42;          /* 顶高光 */
+  --tv-cream-lo:   #1a1c20;          /* 底阴影 */
+  --tv-cream-sh:   #0a0b0d;          /* 深阴影 */
+  --tv-grille:     #08090b;
+  --tv-grille-hole:#000;
+  --tv-led:        #ff2418;          /* 红色电源灯 */
+  --tv-led-glow:   #ff7a55;
+  --tv-brand-fg:   #c8ccd2;          /* SONY 银 */
+  --tv-btn-bg-hi:  #3a3d42;
+  --tv-btn-bg:     #1f2125;
+  --tv-btn-bg-lo:  #0a0b0d;
+  --tv-btn-text:   #d8dce0;
+  --tv-btn-label:  #6a6d72;
+  --tv-room-bg:    radial-gradient(ellipse at 50% 45%, #181a1e 0%, #08090b 55%, #000 100%);
+  --tv-shell-aspect: 1.42;
 }
-/* 屏框超厚 (KV-29 实机就是厚到夸张) */
-body[data-tv-theme="trinitron"] .tv-screen-frame {
+
+/* —— 隐藏不属于此主题的部件 ——————————————————————————— */
+/* 兔耳天线: 整体保留(用作单棒 + 提手载体), 左耳隐藏 */
+body[data-tv-theme="trinitron"] .tv-antennae .rod-l { display: none; }
+
+
+/* =============================================================
+   顶部一体提手 + 单根伸缩天线
+   - .tv-antennae          作为容器, 在屏顶上方
+   - .rod-base 改写为倒 U 形塑料提手 (横跨机身上沿中段)
+   - .rod-r    改写为单根右上 28° 伸缩天线棒, 顶部金属球
+   ============================================================= */
+body[data-tv-theme="trinitron"] .tv-antennae {
+  display: flex;
   position: relative;
-  padding:
-    clamp(28px, 4vw, 60px)              /* 顶: 留给 SONY 字 */
-    clamp(34px, 4.5vw, 70px)            /* 右: 留给侧喇叭 */
-    clamp(32px, 4.5vw, 64px)            /* 底: 留给 IR/LED/Trinitron 标 */
-    clamp(34px, 4.5vw, 70px);           /* 左: 留给侧喇叭 */
-  background: linear-gradient(180deg, #14161a 0%, #050606 100%);
+  height: clamp(42px, 6vh, 78px);
+  margin-bottom: -10px;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 2;
+}
+/* 提手: 倒 U 形, 中部凹陷供"握持" 视觉 */
+body[data-tv-theme="trinitron"] .tv-antennae .rod-base {
+  position: absolute;
+  left: 32%;
+  right: 32%;
+  bottom: 0;
+  width: auto;
+  height: 78%;
+  border-radius: clamp(22px, 3vw, 42px) clamp(22px, 3vw, 42px) 6px 6px;
+  background:
+    linear-gradient(180deg, #36393e 0%, #1f2125 45%, #0a0b0d 100%);
   box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.06),
-    inset 0 -4px 8px rgba(0,0,0,.9),
-    inset 0 0 0 1px #000,
-    0 4px 14px rgba(0,0,0,.7);
+    inset 0 1.5px 0 rgba(255,255,255,.14),
+    inset 0 -2px 3px rgba(0,0,0,.65),
+    inset 0 0 0 1px rgba(0,0,0,.65),
+    0 3px 5px rgba(0,0,0,.6);
 }
-/* 左右纵向喇叭格栅 (Trinitron 标志性) */
-body[data-tv-theme="trinitron"] .tv-screen-frame::before,
-body[data-tv-theme="trinitron"] .tv-screen-frame::after {
+body[data-tv-theme="trinitron"] .tv-antennae .rod-base::before {
   content: "";
   position: absolute;
-  top: 28%;
-  bottom: 28%;
-  width: clamp(22px, 2.8vw, 38px);
-  background-color: #050606;
-  background-image: repeating-linear-gradient(0deg,
-    rgba(255,255,255,.045) 0px,
-    rgba(255,255,255,.045) 1px,
-    rgba(0,0,0,.9) 1px,
-    rgba(0,0,0,.9) 3px);
-  border-radius: 2px;
+  left: 14%;
+  right: 14%;
+  top: 22%;
+  height: 42%;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, #050608 0%, #14161a 100%);
   box-shadow:
-    inset 0 2px 4px rgba(0,0,0,.95),
-    inset 0 -1px 0 rgba(255,255,255,.04),
-    0 0 0 1px rgba(0,0,0,.6);
-  pointer-events: none;
+    inset 0 2px 3px rgba(0,0,0,.9),
+    inset 0 -1px 0 rgba(255,255,255,.04);
 }
-body[data-tv-theme="trinitron"] .tv-screen-frame::before { left:  clamp(7px, 1vw, 14px); }
-body[data-tv-theme="trinitron"] .tv-screen-frame::after  { right: clamp(7px, 1vw, 14px); }
-
-/* 屏上方 SONY 银色凸印大字 (放到 tv-body 上方, 用 brand-badge 不依赖位置) */
-body[data-tv-theme="trinitron"] .tv-brand-badge {
+/* 单根伸缩天线棒 (右后上方) */
+body[data-tv-theme="trinitron"] .tv-antennae .rod-r {
   position: absolute;
-  display: flex;
-  left: 50%;
-  right: auto;
-  top: clamp(14px, 2vw, 32px);
-  transform: translateX(-50%);
+  right: 24%;
+  bottom: 0;
+  width: 3px;
+  height: clamp(54px, 9vh, 110px);
+  transform: rotate(28deg);
+  transform-origin: bottom center;
+  background:
+    linear-gradient(180deg,
+      #f0f1f3 0%,
+      #c8cacd 25%,
+      #8e9094 55%,
+      #4a4d52 85%,
+      #1f2125 100%);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.7);
+}
+body[data-tv-theme="trinitron"] .tv-antennae .rod-r::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #9b9da1 60%, #3a3d42 100%);
+  box-shadow: 0 1px 1px rgba(0,0,0,.55);
+}
+
+
+/* =============================================================
+   机身: 炭灰磨砂 ABS + 顶/底注塑接缝
+   - 列方向: tv-body 复用默认 row 布局 (屏在左, 控制条在右)
+   - 顶部一道接缝, 底部一道接缝
+   ============================================================= */
+body[data-tv-theme="trinitron"] .tv-body {
   flex-direction: row;
-  align-items: center;
-  gap: 12px;
+  gap: clamp(10px, 1.6vw, 24px);
+  padding: clamp(16px, 2.2vw, 32px) clamp(18px, 2.4vw, 36px);
+  border-radius: clamp(4px, .7vw, 12px);
+  position: relative;
+  background:
+    /* 顶部注塑接缝 */
+    linear-gradient(180deg,
+      transparent 0%, transparent 1.4%,
+      rgba(0,0,0,.5) 1.4%, rgba(0,0,0,.5) 1.7%,
+      transparent 1.7%, transparent 100%),
+    /* 主炭灰塑料 - 纵向渐变 */
+    linear-gradient(180deg,
+      #36393e 0%,
+      #2a2c30 12%,
+      #232529 60%,
+      #15171a 94%,
+      #0c0d10 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.10),
+    inset 0 -3px 0 rgba(0,0,0,.6),
+    inset 0 0 0 1.5px rgba(0,0,0,.7),
+    0 22px 46px rgba(0,0,0,.88),
+    0 6px 14px rgba(0,0,0,.55);
+}
+body[data-tv-theme="trinitron"] .tv-body::before {
+  opacity: .52;
+  mix-blend-mode: overlay;
+}
+body[data-tv-theme="trinitron"] .tv-body::after {
+  display: block;
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 1.4%;
+  height: 1px;
+  background: rgba(0,0,0,.7);
+  box-shadow: 0 1px 0 rgba(255,255,255,.04);
+}
+
+
+/* =============================================================
+   屏框: 厚塑料一体, 给屏上 SONY 铭牌 + 屏下铭牌行留位
+   ============================================================= */
+body[data-tv-theme="trinitron"] .tv-screen-frame {
+  flex: 1 1 0;
+  position: relative;
+  padding:
+    clamp(34px, 4.5vw, 72px)         /* 顶: SONY 铭牌区 */
+    clamp(16px, 2vw, 30px)
+    clamp(28px, 3.5vw, 56px)         /* 底: MODEL / Watchman 铭牌行 */
+    clamp(16px, 2vw, 30px);
+  background:
+    linear-gradient(180deg, #1a1c1f 0%, #0e1013 70%, #050608 100%);
+  border-radius: clamp(4px, .7vw, 10px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -2px 4px rgba(0,0,0,.85),
+    inset 0 0 0 1px rgba(0,0,0,.55),
+    0 3px 10px rgba(0,0,0,.55);
+}
+
+
+/* =============================================================
+   单色 CRT 屏管: grayscale + 冷蓝绿 P4 染色 + 球面圆角
+   ============================================================= */
+body[data-tv-theme="trinitron"] .tv-screen > video {
+  filter:
+    grayscale(1)
+    contrast(1.08)
+    brightness(.97)
+    sepia(.18)                  /* 微沉淀 */
+    hue-rotate(170deg)          /* 把暖色拉回冷蓝绿 */
+    saturate(.55);              /* 极弱染色 */
+}
+/* FX 状态下仍保持 B/W 主滤镜 (覆盖 style.css 中各 fx 的彩色滤镜) */
+body[data-tv-theme="trinitron"][data-tv-fx="phosphor"] .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="vcr"]      .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="snow"]     .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="scanlines"] .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="crt"]      .tv-screen > video {
+  filter:
+    grayscale(1)
+    contrast(1.10)
+    brightness(.95)
+    sepia(.20)
+    hue-rotate(170deg)
+    saturate(.5);
+}
+/* 屏面: 90s 便携黑白 CRT 球面感更明显 */
+body[data-tv-theme="trinitron"] .tv-screen {
+  border-radius: clamp(18px, 2.6vw, 36px) / clamp(14px, 2vw, 26px);
+  box-shadow:
+    inset 0 0 0 2px #000,
+    inset 0 0 18px rgba(255,255,255,.05),
+    inset 0 0 80px rgba(0,0,0,.72),
+    0 0 0 2px #14161a,
+    0 0 0 3px #050606;
+}
+/* P4 phosphor 冷蓝白染色覆盖层 (屏管表面叠一层极淡冷光) */
+body[data-tv-theme="trinitron"] .tv-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   z-index: 10;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(180,210,230,.05) 0%,
+      rgba(120,150,180,.10) 70%,
+      rgba(0,0,0,.28) 100%);
+  mix-blend-mode: screen;
+  border-radius: inherit;
+}
+
+
+/* =============================================================
+   顶部 SONY 银色金属凸印 (.tv-brand-badge)
+   ============================================================= */
+body[data-tv-theme="trinitron"] .tv-brand-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: absolute;
+  top: clamp(10px, 1.4vw, 22px);
+  left: clamp(28px, 3vw, 50px);
+  z-index: 5;
   pointer-events: none;
 }
+body[data-tv-theme="trinitron"] .tv-brand-badge .badge-cn { font-size: 0; }
 body[data-tv-theme="trinitron"] .tv-brand-badge .badge-cn::before {
   content: "SONY";
   font-family: "Helvetica Neue", "Helvetica", "Arial Black", sans-serif;
   font-weight: 900;
-  letter-spacing: clamp(4px, .7vw, 9px);
-  font-size: clamp(16px, 2vw, 28px);
-  color: #d8dce0;
-  /* 凸印金属字 */
+  letter-spacing: clamp(3px, .55vw, 8px);
+  font-size: clamp(14px, 1.65vw, 22px);
+  color: #b8bcc2;
+  /* 银色金属凸印 */
   text-shadow:
-    0 -1px 0 rgba(0,0,0,.8),
-    0 1px 0 rgba(255,255,255,.18),
-    0 2px 0 rgba(0,0,0,.4);
+    0 -1px 0 rgba(0,0,0,.85),
+    0  1px 0 rgba(255,255,255,.22),
+    0  2px 0 rgba(0,0,0,.55),
+    0  3px 5px rgba(0,0,0,.6);
 }
-body[data-tv-theme="trinitron"] .tv-brand-badge .badge-en { display: none; }
+body[data-tv-theme="trinitron"] .tv-brand-badge .badge-en { font-size: 0; }
+body[data-tv-theme="trinitron"] .tv-brand-badge .badge-en::before {
+  content: "B/W PORTABLE TELEVISION";
+  display: block;
+  margin-top: 4px;
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-weight: 700;
+  letter-spacing: 2.2px;
+  font-size: clamp(7px, .7vw, 9px);
+  color: #5a5d62;
+  text-shadow: 0 1px 0 rgba(0,0,0,.6);
+}
 
-/* 屏框右下角: 标志性 Trinitron 红字 —— 复用 screen-nameplate 元素
-   (它本身就是绝对定位贴在 tv-body 底部, 改成右对齐 + 红字 + 隐藏原 COLOR TELEVISION 文本) */
+
+/* =============================================================
+   屏下铭牌行 (.screen-nameplate)
+     左: 小字 "MODEL FD-280 · MONOCHROME"
+     右: 红色斜体 "Watchman"
+   ============================================================= */
 body[data-tv-theme="trinitron"] .screen-nameplate {
-  /* 移到屏框右下角内沿: 在 sidepanel 左侧 */
-  left: auto;
-  right: calc(clamp(120px, 16%, 200px) + clamp(40px, 4vw, 70px));
-  bottom: clamp(14px, 2.4vw, 30px);
-  transform: none;
-  background: transparent;
-  padding: 0;
+  position: absolute;
+  left: clamp(24px, 3vw, 46px);
+  right: clamp(160px, 19%, 260px);
+  bottom: clamp(20px, 2.4vw, 38px);
   display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 6px;
-  z-index: 10;
-  pointer-events: none;
+  align-items: center;
+  justify-content: space-between;
+  transform: none;
+  padding: 0;
+  background: transparent;
+  white-space: nowrap;
+  z-index: 4;
 }
-/* 隐藏原 COLOR TELEVISION 文本, 用 ::before 显示 Trinitron 红字 */
-body[data-tv-theme="trinitron"] .screen-nameplate .np-line,
-body[data-tv-theme="trinitron"] .screen-nameplate .np-model { display: none; }
-body[data-tv-theme="trinitron"] .screen-nameplate::before {
-  content: "Trinitron";
-  font-family: "Georgia", "Times New Roman", serif;
+body[data-tv-theme="trinitron"] .screen-nameplate .np-line { font-size: 0; }
+body[data-tv-theme="trinitron"] .screen-nameplate .np-line::before {
+  content: "MODEL FD-280 · MONOCHROME";
+  font-family: "Helvetica Neue", "Helvetica", sans-serif;
+  font-weight: 700;
+  letter-spacing: clamp(1px, .22vw, 2.8px);
+  font-size: clamp(7px, .72vw, 10px);
+  color: #6a6d72;
+  text-shadow: 0 1px 0 rgba(0,0,0,.7);
+}
+body[data-tv-theme="trinitron"] .screen-nameplate .np-model { font-size: 0; opacity: 1; }
+body[data-tv-theme="trinitron"] .screen-nameplate .np-model::before {
+  content: "Watchman";
+  font-family: "Times New Roman", "Georgia", serif;
   font-style: italic;
   font-weight: 700;
-  font-size: clamp(14px, 1.5vw, 22px);
-  letter-spacing: 1px;
-  color: #e53935;                          /* Trinitron 经典红 */
+  font-size: clamp(12px, 1.5vw, 20px);
+  color: #d72e2a;                    /* Watchman / Trinitron 经典红 */
+  letter-spacing: .3px;
   text-shadow:
     0 -1px 0 rgba(0,0,0,.7),
-    0 1px 0 rgba(255,255,255,.10),
-    0 0 8px rgba(229,57,53,.35);
-}
-body[data-tv-theme="trinitron"] .screen-nameplate::after {
-  content: "WEGA";
-  font-family: "Helvetica", "Arial", sans-serif;
-  font-weight: 700;
-  font-size: clamp(9px, .8vw, 11px);
-  letter-spacing: 4px;
-  color: #b8bcc2;
-  text-shadow: 0 1px 0 rgba(0,0,0,.6);
+    0  1px 0 rgba(255,255,255,.06),
+    0  0  8px rgba(215,46,42,.32);
 }
 
-/* TRINITRON 的红色电源 LED 放在侧栏 brand-plate 左侧 (参见下方 ::before)
-   屏框左/右 ::before/::after 已被纵向喇叭格栅占用, 无法再放 IR 窗;
-   90s Sony KV 系列实机的 IR 窗也藏在塑料缝隙中, 视觉权重低, 简化处理 */
-body[data-tv-theme="trinitron"] .brand-plate {
-  position: relative;
-  background: linear-gradient(180deg, #1a1c1f 0%, #050606 100%);
-  padding: 8px 8px 8px 22px;        /* 左侧 22px 留给红色 LED */
-  border-radius: 4px;
+
+/* =============================================================
+   右侧控制面板 (.tv-sidepanel): 同色塑料嵌入, 纵向布局
+   ============================================================= */
+body[data-tv-theme="trinitron"] .tv-sidepanel {
+  flex: 0 0 clamp(130px, 17%, 210px);
+  flex-direction: column;
+  gap: clamp(7px, 1.1vh, 14px);
+  padding: clamp(8px, 1.2vw, 16px) clamp(7px, 1vw, 14px);
+  border-radius: clamp(3px, .5vw, 8px);
+  background:
+    linear-gradient(180deg, #2a2c30 0%, #1a1c1f 60%, #0c0d10 100%);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.08),
-    inset 0 -1px 0 rgba(0,0,0,.6);
+    inset 0 -2px 3px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(0,0,0,.55);
 }
-body[data-tv-theme="trinitron"] .brand-plate::before {
-  /* 真实红色电源 LED */
+
+
+/* =============================================================
+   顶部 旋转调台盘 (.ch-display)
+   - 外圈刻度: 12 等分小白线 (VHF 2-13 模拟)
+   - 中央按盖: 拉丝金属感
+   - 12 点指针: 白色尖
+   - 通道字符: 绿 phosphor 数字, 居中
+   ============================================================= */
+body[data-tv-theme="trinitron"] .ch-display {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: clamp(76px, 9vw, 140px);
+  margin: clamp(4px, .6vw, 10px) auto 0;
+  padding: 0;
+  border-radius: 50%;
+  background:
+    /* 外圈 12 刻度 */
+    repeating-conic-gradient(from 0deg,
+      rgba(255,255,255,.20) 0deg,
+      rgba(255,255,255,.20) 1.5deg,
+      transparent 1.5deg,
+      transparent 30deg),
+    /* 主体拉丝金属感 */
+    radial-gradient(circle at 30% 28%,
+      #4a4d52 0%, #2a2c30 50%, #0e0f12 100%);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.12),
+    inset 0 -3px 4px rgba(0,0,0,.7),
+    inset 0 0 0 2px rgba(0,0,0,.6),
+    0 2px 6px rgba(0,0,0,.7);
+}
+/* 中央按盖 */
+body[data-tv-theme="trinitron"] .ch-display::before {
   content: "";
   position: absolute;
-  left: 8px; top: 50%;
-  transform: translateY(-50%);
-  width: 8px; height: 8px;
+  inset: 17%;
   border-radius: 50%;
-  background: radial-gradient(circle, #ff5b3a 0%, #ff2010 40%, #500608 100%);
-  box-shadow: 0 0 8px rgba(255,80,60,.7), inset 0 1px 0 rgba(255,255,255,.4);
-}
-body[data-tv-theme="trinitron"] .brand-plate .brand-name {
-  color: #d8dce0;
-  font-size: clamp(10px, .95vw, 12px);
-  letter-spacing: 2px;
-}
-body[data-tv-theme="trinitron"] .brand-plate .brand-sub {
-  color: #6a6f76;
-  font-size: clamp(7px, .7vw, 9px);
-}
-
-/* 侧栏: 嵌入厚塑料体内, 中等宽度 (不再"近无边框") */
-body[data-tv-theme="trinitron"] .tv-sidepanel {
-  flex: 0 0 clamp(120px, 16%, 200px);
-  padding: clamp(8px, 1vw, 14px) clamp(6px, .7vw, 10px);
-  gap: clamp(5px, .8vh, 10px);
-  background: linear-gradient(180deg, #1a1c1f 0%, #050606 100%);
+  background:
+    radial-gradient(circle at 30% 25%,
+      #5a5d62 0%, #2a2c30 55%, #0a0b0d 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    inset 0 -2px 4px rgba(0,0,0,.7);
+    inset 0 1px 1px rgba(255,255,255,.16),
+    inset 0 -1px 2px rgba(0,0,0,.6),
+    0 0 0 1px rgba(0,0,0,.6);
 }
-body[data-tv-theme="trinitron"] .ch-info {
-  padding: 6px 7px;
-  gap: 2px;
+/* 12 点位置指针 */
+body[data-tv-theme="trinitron"] .ch-display::after {
+  content: "";
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  width: 3px;
+  height: 22%;
+  background: linear-gradient(180deg, #f0f1f3 0%, #b6b8bb 100%);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 3px rgba(255,255,255,.5);
+  z-index: 2;
 }
-body[data-tv-theme="trinitron"] .ch-info .now-name { font-size: clamp(10px, .95vw, 13px); }
-body[data-tv-theme="trinitron"] .ch-info .src-info { font-size: clamp(8px, .8vw, 11px); }
-/* 喇叭隐藏 (改由屏框两侧的 ::before/::after 实现) */
-body[data-tv-theme="trinitron"] .speaker { display: none; }
-/* 按钮: 90s 黑塑料圆角按键 */
-body[data-tv-theme="trinitron"] .btn-cluster { gap: 4px; }
-body[data-tv-theme="trinitron"] .btn-phys {
-  min-height: 30px;
-  padding: 3px 4px;
-  background: linear-gradient(180deg, #2a2d31 0%, #16181b 60%, #050606 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.10),
-    inset 0 -2px 0 rgba(0,0,0,.6),
-    0 1px 2px rgba(0,0,0,.7);
-  border-radius: 5px;
+/* 通道号: 在按盖中央 绿 phosphor */
+body[data-tv-theme="trinitron"] .ch-display .ch-prefix {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  font-size: clamp(7px, .65vw, 9px);
+  color: #a0d8b0;
+  opacity: .8;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 4px rgba(120,255,160,.45);
 }
-body[data-tv-theme="trinitron"] .btn-phys .btn-label {
-  display: block;
-  font-size: 8px;
-  color: #6a6f76;
+body[data-tv-theme="trinitron"] .ch-display .ch-num {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  font-size: clamp(15px, 1.7vw, 24px);
+  font-family: "Consolas", "Courier New", monospace;
+  font-weight: 700;
+  color: #a0d8b0;
+  text-shadow:
+    0 0 5px rgba(120,255,160,.7),
+    0 0 12px rgba(120,255,160,.35);
+  min-width: auto;
   letter-spacing: 1px;
 }
-body[data-tv-theme="trinitron"] .btn-phys .btn-glyph { color: #d8dce0; font-size: clamp(10px, 1vw, 13px); }
-body[data-tv-theme="trinitron"] .btn-phys.btn-power { min-height: 34px; }
-body[data-tv-theme="trinitron"] .model-tag {
-  color: #4a4f56;
-  font-size: clamp(7px, .7vw, 9px);
+
+
+/* =============================================================
+   brand-plate -> 改写为 "VHF · UHF" 段选标牌
+   ============================================================= */
+body[data-tv-theme="trinitron"] .brand-plate {
+  background: linear-gradient(180deg, #1c1e22 0%, #0a0b0d 100%);
+  border-radius: 3px;
+  padding: 5px 6px 6px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -1px 2px rgba(0,0,0,.65),
+    0 1px 1px rgba(0,0,0,.45);
+}
+body[data-tv-theme="trinitron"] .brand-plate .brand-name { font-size: 0; font-style: normal; }
+body[data-tv-theme="trinitron"] .brand-plate .brand-name::before {
+  content: "VHF \00b7 UHF";
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-weight: 700;
+  font-size: clamp(9px, .9vw, 12px);
+  letter-spacing: 2px;
+  color: #c8ccd2;
+  text-shadow: 0 1px 0 rgba(0,0,0,.7);
+}
+body[data-tv-theme="trinitron"] .brand-plate .brand-sub { font-size: 0; margin-top: 2px; }
+body[data-tv-theme="trinitron"] .brand-plate .brand-sub::before {
+  content: "BAND SELECT";
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-weight: 700;
+  font-size: clamp(6px, .6vw, 8px);
+  letter-spacing: 2.2px;
+  color: #5a5d62;
   text-shadow: 0 1px 0 rgba(0,0,0,.6);
 }
-/* (原 screen-nameplate 文本块已重写为 Trinitron 红字, 见上方) */
-/* 脚架: 与机身同色, 厚一点 */
-body[data-tv-theme="trinitron"] .tv-feet { height: clamp(12px, 1.6vh, 20px); }
-body[data-tv-theme="trinitron"] .tv-feet .foot {
-  width: 24%;
-  background: linear-gradient(180deg, #1a1c1f 0%, #050606 100%);
-  border-radius: 0 0 8px 8px;
+
+
+/* =============================================================
+   ch-info -> 改写为绿 VFD 风格的 NOW / SRC 小条
+   ============================================================= */
+body[data-tv-theme="trinitron"] .ch-info {
+  padding: 3px 8px;
+  gap: 1px;
+  background: linear-gradient(180deg, #000 0%, #03070a 100%);
+  border-radius: 2px;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    0 6px 8px rgba(0,0,0,.6);
+    inset 0 2px 3px rgba(0,0,0,.92),
+    inset 0 -1px 0 rgba(255,255,255,.03),
+    0 1px 1px rgba(0,0,0,.5);
+}
+body[data-tv-theme="trinitron"] .ch-info .ch-info-lbl {
+  color: #79ffa0;
+  opacity: .55;
+  font-size: clamp(7px, .65vw, 9px);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 3px rgba(80,255,140,.3);
+}
+body[data-tv-theme="trinitron"] .ch-info .now-name,
+body[data-tv-theme="trinitron"] .ch-info .src-info {
+  color: #79ffa0;
+  text-shadow: 0 0 5px rgba(80,255,140,.55), 0 1px 0 #000;
+  font-size: clamp(9px, .9vw, 11px);
+  letter-spacing: .3px;
+}
+
+
+/* =============================================================
+   led-row -> 红色 POWER LED + 文字, 紧凑横排
+   ============================================================= */
+body[data-tv-theme="trinitron"] .led-row {
+  gap: 6px;
+  padding: 1px 0;
+  align-items: center;
+  justify-content: center;
+}
+body[data-tv-theme="trinitron"] .led {
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at 30% 30%,
+    #ffb09a 0%, #ff5a30 35%, #d6160a 65%, #500608 100%);
+  box-shadow:
+    0 0 7px rgba(255,80,60,.7),
+    0 0 14px rgba(255,40,20,.4),
+    inset 0 1px 0 rgba(255,255,255,.45);
+}
+body[data-tv-theme="trinitron"] .led-text {
+  color: #6a6d72;
+  font-size: clamp(7px, .65vw, 9px);
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 0 rgba(0,0,0,.55);
+}
+
+
+/* =============================================================
+   speaker -> 垂直长条冲压音孔 (90s 黑白便携经典)
+   ============================================================= */
+body[data-tv-theme="trinitron"] .speaker {
+  flex: 1 1 auto;
+  min-height: clamp(60px, 11vh, 140px);
+  border-radius: 3px;
+  background-color: #05060a;
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,.06) 0px,
+      rgba(255,255,255,.06) 1px,
+      rgba(0,0,0,.96) 1px,
+      rgba(0,0,0,.96) 4px);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.9),
+    inset 0 -1px 0 rgba(255,255,255,.05),
+    inset 0 0 0 1px rgba(0,0,0,.6);
+}
+
+
+/* =============================================================
+   knob-cluster -> 下方两个扁平拇指轮 (BRIGHT / VOLUME)
+   - 复用 .knob, 但形态改为横向 thumbwheel
+   - .knob-cap / .knob-pointer 隐藏
+   ============================================================= */
+body[data-tv-theme="trinitron"] .knob-cluster {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0 10px;
+  justify-content: space-around;
+  align-items: center;
+}
+body[data-tv-theme="trinitron"] .knob {
+  --knob-size: clamp(30px, 3.4vw, 46px);
+  width: var(--knob-size);
+  height: calc(var(--knob-size) * .50);
+  border-radius: 4px;
+  position: relative;
+  background:
+    /* 拇指轮表面纵向细密刻槽 */
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,.85) 0px,
+      rgba(0,0,0,.85) 1px,
+      #3a3d42 1px,
+      #3a3d42 3px,
+      #1a1c1f 3px,
+      #1a1c1f 4px),
+    linear-gradient(180deg, #4a4d52 0%, #1a1c1f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.14),
+    inset 0 -1px 2px rgba(0,0,0,.7),
+    0 1px 2px rgba(0,0,0,.55);
+  cursor: default;
+}
+body[data-tv-theme="trinitron"] .knob .knob-cap,
+body[data-tv-theme="trinitron"] .knob .knob-pointer { display: none; }
+body[data-tv-theme="trinitron"] .knob .knob-label {
+  bottom: -13px;
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  color: #6a6d72;
+  text-shadow: 0 1px 0 rgba(0,0,0,.55);
+}
+/* TUNING 改写为 BRIGHT */
+body[data-tv-theme="trinitron"] .knob.knob-tuner .knob-label { font-size: 0; }
+body[data-tv-theme="trinitron"] .knob.knob-tuner .knob-label::before {
+  content: "BRIGHT";
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  color: #6a6d72;
+}
+
+
+/* =============================================================
+   btn-cluster -> 90s 黑色塑料按键, 2 列
+   ============================================================= */
+body[data-tv-theme="trinitron"] .btn-cluster {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+body[data-tv-theme="trinitron"] .btn-phys {
+  min-height: 26px;
+  padding: 2px 3px;
+  background: linear-gradient(180deg, #2b2d33 0%, #1a1c20 45%, #0c0d10 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.13),
+    inset 0 -1.5px 0 rgba(0,0,0,.7),
+    0 1px 1.5px rgba(0,0,0,.7);
+  border-radius: clamp(3px, .4vw, 6px);
+}
+body[data-tv-theme="trinitron"] .btn-phys.btn-ch {
+  background: linear-gradient(180deg, #353740 0%, #1e2025 45%, #0a0b0e 100%);
+}
+body[data-tv-theme="trinitron"] .btn-phys.btn-src {
+  background: linear-gradient(180deg, #25272c 0%, #14161a 45%, #050606 100%);
+}
+/* 电源键 -> 横跨整行, 红色字符 */
+body[data-tv-theme="trinitron"] .btn-phys.btn-power {
+  grid-column: 1 / -1;
+  min-height: 30px;
+  background: linear-gradient(180deg, #2b2d33 0%, #1c1e22 45%, #0c0d10 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.13),
+    inset 0 -1.5px 0 rgba(0,0,0,.7),
+    0 1px 1.5px rgba(0,0,0,.7),
+    0 0 6px rgba(255,40,20,.18);
+}
+body[data-tv-theme="trinitron"] .btn-phys.btn-power .btn-glyph {
+  color: #ff8870;
+  text-shadow: 0 0 4px rgba(255,80,60,.5);
+}
+body[data-tv-theme="trinitron"] .btn-phys.btn-power .btn-label { color: #6a6d72; }
+body[data-tv-theme="trinitron"] .btn-phys .btn-glyph {
+  color: #d8dce0;
+  font-size: clamp(9px, .95vw, 13px);
+}
+body[data-tv-theme="trinitron"] .btn-phys .btn-label {
+  color: #6a6d72;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+
+
+/* =============================================================
+   msg-strip / model-tag
+   ============================================================= */
+body[data-tv-theme="trinitron"] .msg-strip {
+  background: rgba(0,0,0,.7);
+  border-color: rgba(80,255,140,.35);
+  color: #c8ffd8;
+  text-shadow: 0 0 4px rgba(80,255,140,.4);
+}
+body[data-tv-theme="trinitron"] .model-tag {
+  font-size: clamp(6px, .6vw, 8px);
+  color: #4a4d52;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 0 rgba(0,0,0,.55);
+}
+
+
+/* =============================================================
+   脚架: 极矮黑塑垫脚
+   ============================================================= */
+body[data-tv-theme="trinitron"] .tv-feet {
+  height: clamp(5px, .9vh, 12px);
+  width: 90%;
+}
+body[data-tv-theme="trinitron"] .tv-feet .foot {
+  width: 14%;
+  background: linear-gradient(180deg, #15171b 0%, #050608 100%);
+  border-radius: 0 0 4px 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 2px 4px rgba(0,0,0,.7);
+}
+
+
+/* =============================================================
+   窄屏 (手机竖屏) 适配
+   ============================================================= */
+@media (max-width: 720px) {
+  body[data-tv-theme="trinitron"] .tv-body {
+    flex-direction: column;
+    padding: clamp(12px, 3vw, 22px);
+  }
+  body[data-tv-theme="trinitron"] .tv-screen-frame {
+    padding:
+      clamp(28px, 9vw, 60px)
+      clamp(10px, 3vw, 22px)
+      clamp(24px, 7vw, 46px)
+      clamp(10px, 3vw, 22px);
+  }
+  body[data-tv-theme="trinitron"] .screen-nameplate {
+    left:  clamp(14px, 4vw, 30px);
+    right: clamp(14px, 4vw, 30px);
+    bottom: clamp(8px, 2vw, 16px);
+  }
+  body[data-tv-theme="trinitron"] .tv-sidepanel {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  body[data-tv-theme="trinitron"] .ch-display {
+    max-width: clamp(54px, 14vw, 86px);
+    margin: 0;
+  }
+  body[data-tv-theme="trinitron"] .speaker {
+    flex: 1 1 80px;
+    min-height: 40px;
+  }
+  body[data-tv-theme="trinitron"] .btn-cluster {
+    flex: 1 1 100%;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  body[data-tv-theme="trinitron"] .btn-phys.btn-power {
+    grid-column: auto;
+    min-height: 28px;
+  }
+  body[data-tv-theme="trinitron"] .knob-cluster {
+    display: none;
+  }
+  body[data-tv-theme="trinitron"] .tv-antennae .rod-r {
+    height: clamp(38px, 12vw, 70px);
+  }
 }
