@@ -26,9 +26,8 @@ body[data-tv-theme="classic"] {
   --tv-shell-aspect: 1.55;
 }
 body[data-tv-theme="classic"] .tv-antennae { display: flex; }
-body[data-tv-theme="classic"] .tv-brand-badge { display: flex; }
-body[data-tv-theme="classic"] .tv-brand-badge .badge-cn::before { content: "OldTV"; letter-spacing: 2px; }
-body[data-tv-theme="classic"] .tv-brand-badge .badge-en::before { content: "COLOR · TELEVISION"; }
+/* CLASSIC 主题不显示顶部 OldTV / COLOR·TELEVISION 铭牌 (用户已要求移除) */
+body[data-tv-theme="classic"] .tv-brand-badge { display: none; }
 
 
 /* =========================================================
@@ -171,6 +170,9 @@ body[data-tv-theme="changhong"] .tv-sidepanel {
     0 2px 4px rgba(0,0,0,.45);
 }
 body[data-tv-theme="changhong"] .brand-plate {
+  /* 在长虹主题里 brand-plate 被改写为功能性的 "长虹·精显王" 凸印,
+     需重新显式开启 (style.css 已默认隐藏) */
+  display: flex;
   background: linear-gradient(180deg, #4a525c 0%, #1d2025 100%);
 }
 body[data-tv-theme="changhong"] .brand-name {
@@ -364,9 +366,10 @@ body[data-tv-theme="classic"] .speaker {
     inset 0 2px 3px rgba(0,0,0,.6),
     inset 0 -1px 0 rgba(255,235,180,.08);
 }
-/* 顶部金属铭牌区 (CLASSIC 把 brand-badge 居中浮在顶部金属条上) */
+/* 顶部金属铭牌区 (CLASSIC 把 brand-badge 居中浮在顶部金属条上)
+   —— 用户已要求移除顶部 OldTV / COLOR·TELEVISION 字样, 这里强制隐藏 */
 body[data-tv-theme="classic"] .tv-brand-badge {
-  display: flex;
+  display: none;
   left: 50%;
   transform: translateX(-50%);
   align-items: center;
@@ -842,11 +845,15 @@ body[data-tv-theme="trinitron"] .tv-screen > video {
     saturate(.55);              /* 极弱染色 */
 }
 /* FX 状态下仍保持 B/W 主滤镜 (覆盖 style.css 中各 fx 的彩色滤镜) */
-body[data-tv-theme="trinitron"][data-tv-fx="phosphor"] .tv-screen > video,
-body[data-tv-theme="trinitron"][data-tv-fx="vcr"]      .tv-screen > video,
-body[data-tv-theme="trinitron"][data-tv-fx="snow"]     .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="phosphor"]  .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="vcr"]       .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="snow"]      .tv-screen > video,
 body[data-tv-theme="trinitron"][data-tv-fx="scanlines"] .tv-screen > video,
-body[data-tv-theme="trinitron"][data-tv-fx="crt"]      .tv-screen > video {
+body[data-tv-theme="trinitron"][data-tv-fx="crt"]       .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="bulge"]     .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="tracking"]  .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="composite"] .tv-screen > video,
+body[data-tv-theme="trinitron"][data-tv-fx="crtmax"]    .tv-screen > video {
   filter:
     grayscale(1)
     contrast(1.10)
@@ -930,6 +937,8 @@ body[data-tv-theme="trinitron"] .tv-brand-badge .badge-en::before {
      右: 红色斜体 "Watchman"
    ============================================================= */
 body[data-tv-theme="trinitron"] .screen-nameplate {
+  /* 在 SONY 主题里这里改写为 "MODEL FD-280 · MONOCHROME / Watchman" 红色经典铭牌,
+     是产品身份核心 (非通用"COLOR TELEVISION"字样), 需重新显式开启 */
   position: absolute;
   left: clamp(24px, 3vw, 46px);
   right: clamp(160px, 19%, 260px);
@@ -1081,6 +1090,9 @@ body[data-tv-theme="trinitron"] .ch-display .ch-num {
    brand-plate -> 改写为 "VHF · UHF" 段选标牌
    ============================================================= */
 body[data-tv-theme="trinitron"] .brand-plate {
+  /* 在 SONY 主题里 brand-plate 被改写为 VHF·UHF / BAND SELECT 段选标牌,
+     是功能性铭牌 (非"OldTV"字样), 需重新显式开启 */
+  display: flex;
   background: linear-gradient(180deg, #1c1e22 0%, #0a0b0d 100%);
   border-radius: 3px;
   padding: 5px 6px 6px;
@@ -1327,6 +1339,481 @@ body[data-tv-theme="trinitron"] .tv-feet .foot {
 
 
 /* =============================================================
+   5) MUDAN 牡丹 —— 1980s末-1990s初 上海牡丹牌旗舰款 (BD-2151)
+   -------------------------------------------------------------
+   设计依据 (1988-1992 实机参考):
+     - 上海牡丹电视机厂 BD-2151 / BD-2548 旗舰彩色电视
+     - 同期 国产高端彩电的"钢琴黑+镀铬+红 LED"豪华工业风
+       (与早期米色塑料款 BD-471 是完全不同的产品线)
+   视觉 DNA (与 classic/panda/changhong/trinitron 完全不重叠):
+     ┌─ 主体     : 钢琴黑高光烤漆 + 强镜面斜光 + 反射条
+     │              (vs panda 米黄哑光木纹 / classic 胡桃木 / trinitron 炭灰哑光)
+     ├─ 装饰     : 拉丝镀铬环绕屏框 + 4 颗铬制 L 形包角 + 顶部红光带
+     ├─ 屏框     : 圆角铬环 + 倒角内黑唇, 屏幕悬浮感
+     ├─ 品牌     : 屏左上方大号红金"牡丹"徽 + SVG 五瓣牡丹花
+     │              (大且醒目, 是设计核心而非装饰)
+     ├─ LED      : 顶部满宽红色光带 + 红色磷光七段管
+     ├─ 旋钮     : 2 颗铬环大旋钮, 黑胶木中心 + 红色圆点
+     │              (vs panda 中型木旋钮 / classic 大刻度盘)
+     ├─ 喇叭     : 椭圆铬框 + 斜 45° 蜂窝阵列
+     │              (与现有任何主题的格栅纹理都不同)
+     ├─ 按钮     : 黑色钢琴漆 + 铬色压边 + 字符银蚀刻
+     ├─ 电源     : 红色玻璃凸帽按钮 + 红光泛光
+     ├─ 脚架     : 铬制斜 8° 外撇撑脚 (vs 其余主题塑料矮脚)
+     └─ 天线     : 无 (旗舰款已配遥控)
+   ============================================================= */
+
+/* —— 主题变量 ———————————————————————————————————————— */
+body[data-tv-theme="mudan"] {
+  /* 钢琴黑高光烤漆 (替代默认米色调色板) */
+  --tv-cream:      #0e0e10;          /* 主钢琴黑 */
+  --tv-cream-hi:   #2a2a2e;          /* 顶部高光 (镜面强反射) */
+  --tv-cream-lo:   #050506;          /* 底部深陷 */
+  --tv-cream-sh:   #000000;          /* 极深阴影 */
+  --tv-grille:     #050507;
+  --tv-grille-hole:#000;
+  --tv-led:        #ff1a14;          /* 牡丹红 */
+  --tv-led-glow:   #ff6a55;
+  --tv-knob:       #14141a;          /* 黑胶木 */
+  --tv-knob-hi:    #4a4a52;          /* 铬环高光 */
+  --tv-knob-rim:   #d8dde3;          /* 铬环 */
+  --tv-brand-fg:   #ffd54a;          /* 金色 (品牌徽用) */
+  --tv-btn-bg-hi:  #2a2a2e;
+  --tv-btn-bg:     #14141a;
+  --tv-btn-bg-lo:  #050506;
+  --tv-btn-text:   #e8eaef;
+  --tv-btn-label:  #6a6d76;
+  --tv-room-bg:    radial-gradient(ellipse at 50% 32%, #2a0a0a 0%, #0a0508 60%, #000 100%);
+  --tv-shell-aspect: 1.50;
+}
+
+/* —— 隐藏不属于此主题的元素 ——————————————————————————— */
+body[data-tv-theme="mudan"] .tv-antennae { display: none; }
+/* 注: tv-brand-badge 在本主题里被改写为大号红金牡丹徽 (见下方),
+       不在此处隐藏 */
+
+/* =============================================================
+   机身: 钢琴黑高光烤漆 + 强镜面斜光 + 顶部红光带
+   ============================================================= */
+body[data-tv-theme="mudan"] .tv-body {
+  position: relative;
+  border-radius: clamp(10px, 1.6vw, 22px);
+  padding: clamp(14px, 2.2vw, 30px) clamp(14px, 2vw, 26px) clamp(20px, 2.8vw, 34px);
+  background:
+    /* 顶部红光带 (POWER STANDBY 提示横条, 厚 2.2%) */
+    linear-gradient(180deg,
+      rgba(255, 32, 18, 0)   0%,
+      rgba(255, 32, 18, 0)   1.0%,
+      rgba(255, 90, 70, .85) 1.2%,
+      rgba(255, 32, 18, 1)   1.7%,
+      rgba(160, 10, 4, 1)    2.2%,
+      rgba(0,0,0,.0)         2.4%) top center / 100% 100% no-repeat,
+    /* 强镜面斜向反射条 (左上 -> 右下, 钢琴漆典型高光) */
+    linear-gradient(118deg,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.05) 14%,
+      rgba(255,255,255,0)   28%,
+      rgba(255,255,255,0)   55%,
+      rgba(255,255,255,.04) 68%,
+      rgba(255,255,255,.13) 80%,
+      rgba(255,255,255,0)   88%,
+      rgba(0,0,0,.0)        100%),
+    /* 二次纵向反射 (天花灯反射) */
+    linear-gradient(180deg,
+      rgba(255,255,255,.10) 0%,
+      rgba(255,255,255,0)   8%,
+      rgba(255,255,255,0)   85%,
+      rgba(0,0,0,.30)       100%),
+    /* 主钢琴黑漆面 */
+    radial-gradient(ellipse at 50% 50%,
+      #1a1a1f 0%, #0e0e10 45%, #050506 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.30),
+    inset 0 -2px 0 rgba(0,0,0,.85),
+    inset 0 0 0 1.5px rgba(70,72,78,.35),    /* 外圈细铬光边 */
+    0 22px 48px rgba(0,0,0,.92),
+    0 6px 14px rgba(0,0,0,.55);
+}
+/* 钢琴漆几乎无颗粒纹理, 弱化默认噪点 */
+body[data-tv-theme="mudan"] .tv-body::before {
+  opacity: .10;
+  mix-blend-mode: overlay;
+}
+/* 4 颗铬制 L 形包角 (用 ::after 在 tv-body 上做 4 角的固定铬装饰) */
+body[data-tv-theme="mudan"] .tv-body::after {
+  display: block;
+  position: absolute;
+  inset: clamp(8px, 1.2vw, 16px);
+  background:
+    /* 左上 L 角 */
+    linear-gradient(180deg, #d8dde3 0%, #98a0a8 100%) top    left  / clamp(14px, 1.8vw, 22px) 2.5px no-repeat,
+    linear-gradient(90deg,  #d8dde3 0%, #98a0a8 100%) top    left  / 2.5px clamp(14px, 1.8vw, 22px) no-repeat,
+    /* 右上 L 角 */
+    linear-gradient(180deg, #d8dde3 0%, #98a0a8 100%) top    right / clamp(14px, 1.8vw, 22px) 2.5px no-repeat,
+    linear-gradient(90deg,  #98a0a8 0%, #d8dde3 100%) top    right / 2.5px clamp(14px, 1.8vw, 22px) no-repeat,
+    /* 左下 L 角 */
+    linear-gradient(180deg, #98a0a8 0%, #d8dde3 100%) bottom left  / clamp(14px, 1.8vw, 22px) 2.5px no-repeat,
+    linear-gradient(90deg,  #d8dde3 0%, #98a0a8 100%) bottom left  / 2.5px clamp(14px, 1.8vw, 22px) no-repeat,
+    /* 右下 L 角 */
+    linear-gradient(180deg, #98a0a8 0%, #d8dde3 100%) bottom right / clamp(14px, 1.8vw, 22px) 2.5px no-repeat,
+    linear-gradient(90deg,  #98a0a8 0%, #d8dde3 100%) bottom right / 2.5px clamp(14px, 1.8vw, 22px) no-repeat;
+  pointer-events: none;
+  height: auto;          /* 取消默认 1px 拼缝高度 */
+  left: clamp(8px, 1.2vw, 16px);
+  right: clamp(8px, 1.2vw, 16px);
+  bottom: clamp(8px, 1.2vw, 16px);
+  filter: drop-shadow(0 0 1px rgba(255,255,255,.4));
+  z-index: 3;
+}
+
+/* =============================================================
+   屏框: 拉丝镀铬环 + 倒角内黑唇 (悬浮屏幕感)
+   ============================================================= */
+body[data-tv-theme="mudan"] .tv-screen-frame {
+  position: relative;
+  border-radius: clamp(12px, 1.8vw, 22px);
+  padding: clamp(10px, 1.5vw, 22px);
+  background:
+    /* 内圈黑唇 */
+    linear-gradient(180deg, #050505 0%, #000 100%);
+  box-shadow:
+    /* 外: 拉丝铬环 (用多重 box-shadow 模拟 3 层金属) */
+    0 0 0 2px #050507,
+    0 0 0 4px #6a6d72,
+    0 0 0 5px #d8dde3,
+    0 0 0 6px #98a0a8,
+    0 0 0 7px #050507,
+    /* 内阴影 */
+    inset 0 0 12px rgba(0,0,0,.95),
+    inset 0 0 0 1.5px rgba(220,225,235,.20),
+    /* 外发光 (镜面反射环境光) */
+    0 6px 18px rgba(0,0,0,.7),
+    0 0 22px rgba(255, 50, 30, .08);     /* 顶部红光环境染色 */
+}
+body[data-tv-theme="mudan"] .tv-screen {
+  border-radius: clamp(8px, 1.2vw, 14px) / clamp(6px, .9vw, 11px);
+  box-shadow:
+    inset 0 0 0 2px #000,
+    inset 0 0 14px rgba(0,0,0,.92),
+    inset 0 0 50px rgba(0,0,0,.55),
+    0 0 0 1.5px #1a1a1f;
+}
+
+/* =============================================================
+   品牌大徽 (重新启用 .tv-brand-badge, 浮在屏框左上方机身上)
+   - 大号红色"牡丹"楷体 + 金色五瓣牡丹花 SVG
+   - 是本主题的核心识别元素 (不是装饰)
+   ============================================================= */
+body[data-tv-theme="mudan"] .tv-brand-badge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(6px, .8vw, 10px);
+  position: absolute;
+  top: clamp(10px, 1.3vw, 18px);
+  left: clamp(20px, 2.5vw, 36px);
+  z-index: 4;
+  padding: 4px 12px 4px 38px;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg,
+      rgba(40, 8, 8, .85) 0%,
+      rgba(20, 4, 4, .92) 100%);
+  border: 1px solid rgba(255, 213, 74, .35);
+  box-shadow:
+    inset 0 1px 0 rgba(255,213,74,.18),
+    inset 0 -1px 1px rgba(0,0,0,.6),
+    0 2px 6px rgba(0,0,0,.6),
+    0 0 10px rgba(255,40,30,.20);
+  /* 内嵌大号 SVG 五瓣牡丹花 (无外部依赖) */
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><g transform='translate(16 16)'><g fill='%23ff2418' stroke='%23a0080a' stroke-width='.7'><ellipse cx='0' cy='-7' rx='4.2' ry='6.4'/><ellipse cx='0' cy='-7' rx='4.2' ry='6.4' transform='rotate(72)'/><ellipse cx='0' cy='-7' rx='4.2' ry='6.4' transform='rotate(144)'/><ellipse cx='0' cy='-7' rx='4.2' ry='6.4' transform='rotate(216)'/><ellipse cx='0' cy='-7' rx='4.2' ry='6.4' transform='rotate(288)'/></g><circle r='2.6' fill='%23ffd54a' stroke='%23a07a18' stroke-width='.6'/></g></svg>");
+  background-repeat: no-repeat;
+  background-position: 6px center;
+  background-size: 26px 26px;
+}
+body[data-tv-theme="mudan"] .tv-brand-badge .badge-cn { font-size: 0; }
+body[data-tv-theme="mudan"] .tv-brand-badge .badge-cn::before {
+  content: "牡丹";
+  font-family: "STKaiti", "KaiTi", "FangSong", "SimSun", serif;
+  font-weight: 900;
+  font-size: clamp(15px, 1.7vw, 22px);
+  letter-spacing: 4px;
+  color: #ffe06a;
+  background:
+    linear-gradient(180deg, #ffe49a 0%, #c9962a 60%, #8a5e10 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 1px 0 rgba(0,0,0,.7),
+    0 0 8px rgba(255,180,40,.35);
+}
+body[data-tv-theme="mudan"] .tv-brand-badge .badge-en { display: none; }
+
+/* 屏下铭牌彻底隐藏 (品牌已在屏左上, 不需重复) */
+body[data-tv-theme="mudan"] .screen-nameplate { display: none; }
+
+/* =============================================================
+   侧栏控制面板: 同色钢琴黑嵌入板 + 铬色描边
+   ============================================================= */
+body[data-tv-theme="mudan"] .tv-sidepanel {
+  flex: 0 0 clamp(150px, 20%, 230px);
+  border-radius: clamp(8px, 1vw, 14px);
+  padding: clamp(10px, 1.4vw, 18px) clamp(8px, 1.2vw, 14px);
+  background:
+    /* 钢琴黑高光 */
+    linear-gradient(180deg,
+      rgba(255,255,255,.10) 0%,
+      rgba(255,255,255,0)   18%,
+      rgba(0,0,0,.30)       100%),
+    radial-gradient(ellipse at 30% 8%, #1a1a1f 0%, #0e0e10 45%, #050506 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.18),
+    inset 0 -2px 4px rgba(0,0,0,.7),
+    inset 0 0 0 1px rgba(220,225,235,.18),    /* 铬色描边 */
+    0 2px 4px rgba(0,0,0,.45);
+}
+
+/* =============================================================
+   频道号 LED: 红色磷光七段管 (与 mudan 红主题统一)
+   ============================================================= */
+body[data-tv-theme="mudan"] .ch-display {
+  background: linear-gradient(180deg, #200304 0%, #050001 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.95),
+    inset 0 0 0 1px rgba(220,225,235,.16),     /* 铬细描边 */
+    0 1px 2px rgba(0,0,0,.5);
+}
+body[data-tv-theme="mudan"] .ch-display .ch-prefix {
+  color: #ff5848; opacity: .85;
+}
+body[data-tv-theme="mudan"] .ch-display .ch-num {
+  color: #ff2418;
+  text-shadow:
+    0 0 6px rgba(255,40,20,.95),
+    0 0 16px rgba(255,40,20,.55);
+}
+body[data-tv-theme="mudan"] .ch-info {
+  background: linear-gradient(180deg, #200304 0%, #050001 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,.95),
+    inset 0 0 0 1px rgba(220,225,235,.14);
+}
+body[data-tv-theme="mudan"] .ch-info .ch-info-lbl,
+body[data-tv-theme="mudan"] .ch-info .now-name,
+body[data-tv-theme="mudan"] .ch-info .src-info {
+  color: #ff6a55;
+  text-shadow: 0 0 5px rgba(255,60,40,.55), 0 1px 0 #000;
+}
+body[data-tv-theme="mudan"] .msg-strip {
+  border-color: rgba(255,80,55,.55);
+  color: #ffd0c0;
+  text-shadow: 0 0 4px rgba(255,80,55,.4);
+  background: rgba(20,3,3,.8);
+}
+body[data-tv-theme="mudan"] .led-text {
+  color: #b0b4bc;
+  text-shadow: 0 1px 0 rgba(0,0,0,.7);
+}
+body[data-tv-theme="mudan"] .led {
+  /* POWER 红 LED 加强发光 */
+  background: radial-gradient(circle at 30% 30%,
+    #ffb0a0 0%, #ff2418 35%, #a0080a 65%, #2a0204 100%);
+  box-shadow:
+    0 0 8px rgba(255,40,20,.85),
+    0 0 18px rgba(255,40,20,.45),
+    inset 0 1px 0 rgba(255,255,255,.5);
+}
+
+/* =============================================================
+   旋钮组: 2 颗铬环大旋钮 (调台 / 音量), 垂直堆叠
+   - 与 panda 中型木旋钮 / classic 大刻度盘 完全不同的金属质感
+   ============================================================= */
+body[data-tv-theme="mudan"] .knob-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 2.6vw, 30px);
+  padding: clamp(8px, 1.2vw, 14px) 0 clamp(20px, 2.4vw, 30px);
+}
+body[data-tv-theme="mudan"] .knob {
+  --knob-size: clamp(44px, 5.4vw, 66px);
+  /* 外圈拉丝铬环 + 内黑胶木 */
+  background:
+    /* 内黑胶木中心 */
+    radial-gradient(circle,
+      #2a2a30 0%, #14141a 30%, #050506 50%, transparent 51%),
+    /* 拉丝铬外环 */
+    conic-gradient(from 90deg,
+      #d8dde3 0deg,
+      #6a6d72 30deg,
+      #f0f3f8 60deg,
+      #98a0a8 90deg,
+      #d8dde3 120deg,
+      #4a4d52 180deg,
+      #d8dde3 240deg,
+      #98a0a8 300deg,
+      #d8dde3 360deg);
+  box-shadow:
+    0 0 0 1.5px #050506,
+    inset 0 2px 2px rgba(255,255,255,.30),
+    inset 0 -3px 4px rgba(0,0,0,.7),
+    0 3px 6px rgba(0,0,0,.7);
+}
+/* 旋钮中心黑胶木: 替换默认半径 */
+body[data-tv-theme="mudan"] .knob .knob-cap {
+  inset: 22%;            /* 让外圈铬环更宽 */
+  background: radial-gradient(circle at 35% 30%,
+    #2a2a30 0%, #14141a 60%, #050506 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.18),
+    inset 0 -1px 2px rgba(0,0,0,.85),
+    0 0 0 1px rgba(220,225,235,.5);     /* 内圈细铬亮线 */
+}
+/* 中心红色圆点 (旋钮"红芯", mudan 标志性) */
+body[data-tv-theme="mudan"] .knob::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 18%; height: 18%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%,
+    #ff7a55 0%, #ff1a14 50%, #a00808 100%);
+  box-shadow:
+    0 0 5px rgba(255,40,20,.7),
+    inset 0 1px 0 rgba(255,255,255,.5);
+  pointer-events: none;
+  z-index: 2;
+}
+/* 指针: 银色 (而非默认米色) */
+body[data-tv-theme="mudan"] .knob .knob-pointer {
+  background: linear-gradient(180deg, #ffffff 0%, #98a0a8 100%);
+  box-shadow: 0 0 3px rgba(255,255,255,.7);
+  z-index: 1;
+}
+/* 楷体汉字标签 */
+body[data-tv-theme="mudan"] .knob.knob-tuner .knob-label,
+body[data-tv-theme="mudan"] .knob.knob-volume .knob-label { font-size: 0; }
+body[data-tv-theme="mudan"] .knob.knob-tuner .knob-label::before  { content: "调台"; }
+body[data-tv-theme="mudan"] .knob.knob-volume .knob-label::before { content: "音量"; }
+body[data-tv-theme="mudan"] .knob.knob-tuner .knob-label::before,
+body[data-tv-theme="mudan"] .knob.knob-volume .knob-label::before {
+  font-family: "STKaiti", "KaiTi", "FangSong", "SimSun", serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #d8dde3;
+  text-shadow: 0 1px 0 rgba(0,0,0,.85);
+}
+
+/* =============================================================
+   喇叭格栅: 椭圆铬框 + 斜 45° 蜂窝阵列 (本主题独有纹理)
+   ============================================================= */
+body[data-tv-theme="mudan"] .speaker {
+  flex: 1 0 auto;
+  min-height: clamp(50px, 8vh, 100px);
+  border-radius: 999px;                /* 椭圆铬框 */
+  background-color: #050507;
+  /* 45° 旋转的圆点蜂窝, 区别于 panda 的正交圆孔阵 */
+  background-image:
+    radial-gradient(circle at center, #1a1a20 22%, transparent 23%),
+    radial-gradient(circle at center, #050507 22%, transparent 23%);
+  background-size: 9px 9px, 9px 9px;
+  background-position: 0 0, 4.5px 4.5px;
+  box-shadow:
+    /* 椭圆铬框 (3 层金属) */
+    inset 0 0 0 1.5px #050507,
+    inset 0 0 0 3px #6a6d72,
+    inset 0 0 0 4px #d8dde3,
+    inset 0 0 0 5px #4a4d52,
+    inset 0 3px 4px rgba(0,0,0,.85),
+    inset 0 -1px 0 rgba(255,255,255,.06);
+}
+
+/* =============================================================
+   按钮组: 黑色钢琴漆 + 铬色压边 + 字符银蚀刻
+   ============================================================= */
+body[data-tv-theme="mudan"] .btn-phys {
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, #2a2a2e 0%, #14141a 50%, #050506 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.20),
+    inset 0 -2px 0 rgba(0,0,0,.85),
+    inset 0 0 0 1px rgba(220,225,235,.18),    /* 铬色压边 */
+    0 1px 2px rgba(0,0,0,.7);
+}
+body[data-tv-theme="mudan"] .btn-phys.btn-ch {
+  /* CH 键带轻微红色发光提示 */
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,180,160,.25),
+    inset 0 -2px 0 rgba(0,0,0,.85),
+    inset 0 0 0 1px rgba(255,80,55,.35),
+    0 0 6px rgba(255,40,20,.18),
+    0 1px 2px rgba(0,0,0,.7);
+}
+body[data-tv-theme="mudan"] .btn-phys.btn-src {
+  background:
+    linear-gradient(180deg, #14141a 0%, #08080a 50%, #050506 100%);
+}
+body[data-tv-theme="mudan"] .btn-phys .btn-label {
+  color: #98a0a8;
+  text-shadow: 0 -1px 0 rgba(0,0,0,.85);
+  letter-spacing: 1.5px;
+}
+body[data-tv-theme="mudan"] .btn-phys .btn-glyph {
+  color: #e8eaef;
+  text-shadow: 0 1px 0 rgba(0,0,0,.85), 0 0 3px rgba(255,255,255,.2);
+}
+/* 电源键: 红色玻璃凸帽 (与现有所有主题电源键质感不同) */
+body[data-tv-theme="mudan"] .btn-phys.btn-power {
+  border-radius: 6px;
+  background:
+    /* 内层凸起红玻璃球 */
+    radial-gradient(ellipse at 50% 30%,
+      #ff8870 0%, #ff2418 35%, #a0080a 70%, #500204 100%);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.45),
+    inset 0 -2px 3px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(220,225,235,.25),    /* 铬色压边 */
+    0 2px 5px rgba(0,0,0,.7),
+    0 0 14px rgba(255,40,20,.45);             /* 红光泛光 */
+}
+body[data-tv-theme="mudan"] .btn-phys.btn-power .btn-label {
+  color: rgba(255,255,255,.8);
+  text-shadow: 0 1px 1px rgba(0,0,0,.7);
+}
+body[data-tv-theme="mudan"] .btn-phys.btn-power .btn-glyph {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.7), 0 0 6px rgba(255,255,255,.5);
+}
+
+/* =============================================================
+   脚架: 铬制斜 8° 外撇撑脚 (本主题独有形态)
+   ============================================================= */
+body[data-tv-theme="mudan"] .tv-feet {
+  height: clamp(14px, 1.8vh, 22px);
+  width: 80%;
+  padding: 0 4%;
+}
+body[data-tv-theme="mudan"] .tv-feet .foot {
+  width: 14%;
+  /* 铬色金属感 */
+  background:
+    linear-gradient(180deg,
+      #d8dde3 0%, #98a0a8 30%, #4a4d52 65%, #14171a 100%);
+  border-radius: 0 0 4px 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -2px 2px rgba(0,0,0,.5),
+    0 4px 6px rgba(0,0,0,.7);
+}
+body[data-tv-theme="mudan"] .tv-feet .foot.foot-l { transform: skewX(-8deg); }
+body[data-tv-theme="mudan"] .tv-feet .foot.foot-r { transform: skewX( 8deg); }
+
+
+/* =============================================================
    窄屏 (手机竖屏) 适配
    ============================================================= */
 @media (max-width: 720px) {
@@ -1374,5 +1861,994 @@ body[data-tv-theme="trinitron"] .tv-feet .foot {
   }
   body[data-tv-theme="trinitron"] .tv-antennae .rod-r {
     height: clamp(38px, 12vw, 70px);
+  }
+}
+
+
+/* =============================================================
+   6) PREDICTA · 1958 美国 Philco "Predicta Holiday" 独眼摆台 TV
+   -------------------------------------------------------------
+   设计依据 (1958-1960 实机):
+     - Philco Predicta "Holiday"     (H3408 ivory + charcoal)
+     - Philco Predicta "Princess"    (3410 / 3412)
+     - Philco Predicta "Pedestal"    (UG-4654, 落地版)
+   视觉 DNA (与既有 5 套主题完全不重叠):
+     ┌─ 形态     : 显像管"独眼"悬浮于机身上方, 由镀铬细颈支撑
+     │              (其余 5 套主题屏幕都嵌入机身正面, 这是核心区别)
+     ├─ 主体     : 上半象牙白塑料 + 下半炭灰底座, 两段式
+     ├─ 屏框     : 整圈镀铬环 + 内黑唇 + 球面 1950s CRT 圆角
+     ├─ 颈支座   : 居中梯形镀铬颈, 顶部宽底部窄, 暗示可旋转
+     ├─ 品牌     : 屏下方 Atomic-age 斜体红色 "Predicta" 草体 Logo
+     ├─ 控件     : 横排 4 颗小铬色钮 + 右侧红色玻璃凸帽 POWER
+     ├─ 脚架     : 4 根 18° 撇出 hairpin 金属细脚 (黄铜色)
+     └─ 屏幕     : 保持彩色画面 (不做 grayscale, 区别于 trinitron)
+   ============================================================= */
+
+/* —— 主题变量 ———————————————————————————————————————— */
+body[data-tv-theme="predicta"] {
+  --tv-cream:      #efe6d2;          /* 象牙白 ABS */
+  --tv-cream-hi:   #fcf6e8;          /* 高光 */
+  --tv-cream-lo:   #c8bda4;          /* 阴影 */
+  --tv-cream-sh:   #6e6755;
+  --tv-grille:     #1a1c20;
+  --tv-grille-hole:#050608;
+  --tv-led:        #ff2418;
+  --tv-led-glow:   #ff7a55;
+  --tv-knob:       #6a6d72;
+  --tv-knob-hi:    #d8dde3;
+  --tv-knob-rim:   #2a2c30;
+  --tv-brand-fg:   #d22c2a;          /* Predicta 草体红 */
+  --tv-btn-bg-hi:  #e0e3e8;
+  --tv-btn-bg:     #98a0a8;
+  --tv-btn-bg-lo:  #4a4d52;
+  --tv-btn-text:   #14161a;
+  --tv-btn-label:  #4a4d52;
+  --tv-room-bg:    radial-gradient(ellipse at 50% 36%, #2a2418 0%, #0e0c08 60%, #020202 100%);
+  --tv-shell-aspect: 1.42;
+}
+
+/* —— 隐藏不属于此主题的元素 ——————————————————————————— */
+body[data-tv-theme="predicta"] .tv-antennae       { display: none; }
+body[data-tv-theme="predicta"] .screen-nameplate  { display: none; }
+
+/* =============================================================
+   关键: tv-body 改为 column 布局, 上= 镀铬颈+悬浮屏, 下= 象牙底座
+   ============================================================= */
+body[data-tv-theme="predicta"] .tv-body {
+  flex-direction: column;
+  gap: 0;                            /* 颈支座由 ::before 拼接 */
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  position: relative;
+  overflow: visible;
+}
+body[data-tv-theme="predicta"] .tv-body::before,
+body[data-tv-theme="predicta"] .tv-body::after { content: none; }
+
+/* =============================================================
+   上半: 悬浮显像管 (屏 + 镀铬圆环 + 颈支座底部 hint)
+   - tv-screen-frame 自己做"独眼"圆环外观
+   - 通过 absolute ::before/::after 营造"颈"
+   ============================================================= */
+body[data-tv-theme="predicta"] .tv-screen-frame {
+  flex: 0 1 auto;
+  /* 关键: 在 column flex 里需要显式 aspect-ratio, 否则
+     .tv-screen 的 container query 单位无法解析高度 */
+  width: min(72%, calc(62vh * 1.45));
+  aspect-ratio: 1.45 / 1;
+  margin: clamp(14px, 2vh, 28px) auto 0;
+  padding: clamp(10px, 1.6vw, 22px);
+  position: relative;
+  border-radius: clamp(14px, 2.4vw, 28px) / clamp(11px, 1.8vw, 22px);
+  /* 整圈镀铬环 + 内黑唇 */
+  background:
+    linear-gradient(180deg, #0a0b0d 0%, #050608 100%);
+  box-shadow:
+    /* 多层金属环 (亮-暗-亮 模拟拉丝铬) */
+    0 0 0 2px #050608,
+    0 0 0 4px #c8ccd2,
+    0 0 0 5px #f4f6fa,
+    0 0 0 7px #8a8e94,
+    0 0 0 8px #2a2c30,
+    inset 0 0 14px rgba(0,0,0,.9),
+    inset 0 0 0 1px rgba(255,255,255,.10),
+    /* 悬浮投影 */
+    0 18px 30px rgba(0,0,0,.55),
+    0 8px 14px rgba(0,0,0,.4);
+  z-index: 3;
+}
+/* 顶部弧形高光 (球面 CRT 反光) */
+body[data-tv-theme="predicta"] .tv-screen-frame::before {
+  content: "";
+  position: absolute;
+  left: 10%; right: 10%;
+  top: 6%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 0%,
+    rgba(255,255,255,.32) 0%,
+    rgba(255,255,255,.12) 40%,
+    transparent 70%);
+  pointer-events: none;
+  z-index: 4;
+  filter: blur(1px);
+}
+/* 镀铬颈支座: 从屏框底部中央向下延伸的梯形 */
+body[data-tv-theme="predicta"] .tv-screen-frame::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: clamp(-22px, -2.4vw, -36px);
+  transform: translateX(-50%);
+  width: clamp(50px, 6.5vw, 90px);
+  height: clamp(24px, 2.8vw, 40px);
+  background:
+    /* 拉丝铬纵纹 */
+    repeating-linear-gradient(90deg,
+      rgba(255,255,255,.18) 0px,
+      rgba(255,255,255,.18) 1px,
+      rgba(0,0,0,.18) 1px,
+      rgba(0,0,0,.18) 2.2px),
+    linear-gradient(180deg, #f0f3f8 0%, #c8ccd2 35%, #8a8e94 70%, #4a4d52 100%);
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);
+  box-shadow:
+    0 4px 6px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.45),
+    inset 0 -2px 2px rgba(0,0,0,.35);
+  z-index: 2;
+}
+/* 屏幕本体: 球面圆角, 内部仍保持彩色 (不做 grayscale) */
+body[data-tv-theme="predicta"] .tv-screen {
+  border-radius: clamp(20px, 3vw, 38px) / clamp(15px, 2.2vw, 28px);
+  box-shadow:
+    inset 0 0 0 2px #000,
+    inset 0 0 22px rgba(0,0,0,.55),
+    inset 0 0 70px rgba(0,0,0,.30),
+    0 0 0 1.5px #14161a;
+}
+
+/* =============================================================
+   下半: 象牙白塑料底座 + 横排控件 + 黄铜细脚
+   - 通过 tv-sidepanel 承担整个底座的视觉 (改为横排)
+   - brand-plate 改写为 Predicta 红色草体 Logo, 居中浮在底座顶部
+   ============================================================= */
+body[data-tv-theme="predicta"] .tv-sidepanel {
+  flex: 0 0 auto;
+  width: min(86%, calc(86vh * 1.6));
+  margin: clamp(28px, 3.4vw, 50px) auto clamp(6px, .8vh, 14px);
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1vw, 14px);
+  padding: clamp(14px, 2vw, 26px) clamp(20px, 2.6vw, 38px) clamp(12px, 1.6vw, 22px);
+  border-radius: clamp(10px, 1.6vw, 20px);
+  position: relative;
+  background:
+    /* 上沿亮高光带 */
+    linear-gradient(180deg,
+      rgba(255,255,255,.45) 0%,
+      rgba(255,255,255,.15) 4%,
+      transparent 12%, transparent 88%,
+      rgba(0,0,0,.18) 100%),
+    /* 主象牙白塑料 */
+    radial-gradient(ellipse at 50% 0%,
+      #fcf6e8 0%, #efe6d2 40%, #c8bda4 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.75),
+    inset 0 -2px 0 rgba(0,0,0,.18),
+    inset 0 0 0 1px rgba(110,103,85,.4),
+    0 12px 26px rgba(0,0,0,.55),
+    0 4px 10px rgba(0,0,0,.35);
+}
+/* 底座顶部炭灰条 (两段式机身的过渡色) */
+body[data-tv-theme="predicta"] .tv-sidepanel::before {
+  content: "";
+  position: absolute;
+  left: 8%; right: 8%;
+  top: -1px;
+  height: 5px;
+  background: linear-gradient(180deg, #2a2c30 0%, #14161a 100%);
+  border-radius: 2px 2px 0 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 1px 0 rgba(255,255,255,.55);
+}
+
+/* —— brand-plate -> "Predicta" 红色草体居中 logo —— */
+body[data-tv-theme="predicta"] .brand-plate {
+  display: flex;
+  flex: 1 1 100%;
+  justify-content: center;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 0 4px;
+  order: -1;
+}
+body[data-tv-theme="predicta"] .brand-plate .brand-name { font-size: 0; }
+body[data-tv-theme="predicta"] .brand-plate .brand-name::before {
+  content: "Predicta";
+  font-family: "Brush Script MT", "Lucida Handwriting", "Segoe Script", cursive;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(18px, 2.1vw, 30px);
+  color: #d22c2a;
+  letter-spacing: 1px;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.65),
+    0 -1px 0 rgba(140,15,12,.35),
+    0 0 6px rgba(210,44,42,.18);
+}
+body[data-tv-theme="predicta"] .brand-plate .brand-sub { font-size: 0; }
+body[data-tv-theme="predicta"] .brand-plate .brand-sub::before {
+  content: "PHILCO · SWIVEL SCREEN";
+  margin-left: 8px;
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-weight: 700;
+  font-size: clamp(8px, .82vw, 11px);
+  letter-spacing: 3px;
+  color: #4a4d52;
+  text-shadow: 0 1px 0 rgba(255,255,255,.7);
+  vertical-align: middle;
+}
+
+/* =============================================================
+   横排控件: 频道信息 + LED 频道号 + 4 颗小铬钮 + 电源凸帽
+   ============================================================= */
+/* 频道信息: 简约浅米黄长条 */
+body[data-tv-theme="predicta"] .ch-info {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 4px 10px;
+  background:
+    linear-gradient(180deg, #14161a 0%, #050608 100%);
+  border-radius: 3px;
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,.85),
+    inset 0 -1px 0 rgba(255,255,255,.05),
+    0 1px 0 rgba(255,255,255,.7);
+}
+body[data-tv-theme="predicta"] .ch-info .ch-info-lbl {
+  color: #ffd54a;
+  opacity: .65;
+  font-size: clamp(7px, .68vw, 9px);
+  letter-spacing: 1.5px;
+}
+body[data-tv-theme="predicta"] .ch-info .now-name,
+body[data-tv-theme="predicta"] .ch-info .src-info {
+  color: #ffe89a;
+  text-shadow: 0 0 4px rgba(255,200,80,.5), 0 1px 0 #000;
+  font-size: clamp(10px, .95vw, 12px);
+}
+
+/* 频道号 LED: 椭圆琥珀色 (1950s 调谐器风) */
+body[data-tv-theme="predicta"] .ch-display {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #14100a 0%, #050402 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,.9),
+    inset 0 0 0 1px rgba(216,221,227,.35),
+    0 1px 0 rgba(255,255,255,.6);
+}
+body[data-tv-theme="predicta"] .ch-display .ch-prefix {
+  color: #ffb13a; opacity: .8;
+  font-size: clamp(8px, .8vw, 11px);
+}
+body[data-tv-theme="predicta"] .ch-display .ch-num {
+  color: #ffd54a;
+  font-size: clamp(15px, 1.6vw, 22px);
+  text-shadow:
+    0 0 5px rgba(255,180,40,.85),
+    0 0 12px rgba(255,180,40,.4);
+}
+
+/* —— LED & speaker & knob 隐藏: 此型号无大喇叭/大旋钮 (一体声从底座网孔) —— */
+body[data-tv-theme="predicta"] .led-row { display: none; }
+body[data-tv-theme="predicta"] .speaker {
+  /* 改为底座下方一道细横排音孔 */
+  flex: 0 0 100%;
+  order: 10;
+  min-height: clamp(10px, 1.4vh, 16px);
+  margin-top: clamp(4px, .6vh, 8px);
+  border-radius: 2px;
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,.55) 0px,
+      rgba(0,0,0,.55) 1px,
+      transparent 1px,
+      transparent 4px);
+  box-shadow:
+    inset 0 1px 1px rgba(0,0,0,.25),
+    inset 0 -1px 0 rgba(255,255,255,.55);
+}
+body[data-tv-theme="predicta"] .knob-cluster { display: none; }
+
+/* —— 按钮组: 横排 4 + 1 (电源凸帽) —— */
+body[data-tv-theme="predicta"] .btn-cluster {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(38px, 1fr));
+  gap: 4px;
+  flex: 1 1 auto;
+}
+body[data-tv-theme="predicta"] .btn-phys {
+  min-height: 28px;
+  padding: 2px 4px;
+  border-radius: 999px;
+  /* 拉丝小铬钮 */
+  background:
+    repeating-linear-gradient(180deg,
+      rgba(255,255,255,.30) 0px,
+      rgba(255,255,255,.30) 1px,
+      rgba(0,0,0,.10) 1px,
+      rgba(0,0,0,.10) 2px),
+    linear-gradient(180deg, #f0f3f8 0%, #c8ccd2 50%, #8a8e94 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 -1.5px 0 rgba(0,0,0,.35),
+    inset 0 0 0 1px rgba(74,77,82,.4),
+    0 1px 2px rgba(0,0,0,.5);
+}
+body[data-tv-theme="predicta"] .btn-phys .btn-label {
+  color: #2a2c30;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  text-shadow: 0 1px 0 rgba(255,255,255,.55);
+}
+body[data-tv-theme="predicta"] .btn-phys .btn-glyph {
+  color: #14161a;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45);
+}
+/* 电源键: 横跨 2 列, 红色玻璃凸帽 */
+body[data-tv-theme="predicta"] .btn-phys.btn-power {
+  grid-column: span 2;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at 50% 30%,
+      #ffb09a 0%, #ff2418 35%, #a0080a 70%, #500204 100%);
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.50),
+    inset 0 -2px 3px rgba(0,0,0,.45),
+    inset 0 0 0 1px rgba(220,225,235,.35),
+    0 2px 4px rgba(0,0,0,.55),
+    0 0 10px rgba(255,40,20,.45);
+}
+body[data-tv-theme="predicta"] .btn-phys.btn-power .btn-label,
+body[data-tv-theme="predicta"] .btn-phys.btn-power .btn-glyph {
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0,0,0,.6), 0 0 4px rgba(255,255,255,.45);
+}
+
+/* —— msg-strip / model-tag —— */
+body[data-tv-theme="predicta"] .msg-strip {
+  flex: 1 1 100%;
+  background: rgba(0,0,0,.18);
+  color: #4a3a18;
+  border-color: rgba(110,103,85,.45);
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+body[data-tv-theme="predicta"] .model-tag {
+  flex: 0 0 auto;
+  color: #6e6755;
+  text-shadow: 0 1px 0 rgba(255,255,255,.6);
+}
+/* 顶部品牌大铭牌不需要 */
+body[data-tv-theme="predicta"] .tv-brand-badge { display: none; }
+
+/* =============================================================
+   底部: 4 根 18° 撇出 hairpin 黄铜细脚
+   - 复用 .tv-feet, 改写为 4 根细针脚 (而不是 2 块塑料垫脚)
+   ============================================================= */
+body[data-tv-theme="predicta"] .tv-feet {
+  position: relative;
+  height: clamp(22px, 3vh, 38px);
+  width: 86%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 clamp(20px, 4vw, 60px);
+}
+/* 隐藏默认 2 块塑料脚 */
+body[data-tv-theme="predicta"] .tv-feet .foot { display: none; }
+/* 用 ::before/::after 各画 2 根脚 (left/right pair) */
+body[data-tv-theme="predicta"] .tv-feet::before,
+body[data-tv-theme="predicta"] .tv-feet::after {
+  content: "";
+  width: 3px;
+  height: 100%;
+  background:
+    linear-gradient(180deg,
+      #f4d68a 0%, #d2a04a 30%, #8a6418 75%, #4a3208 100%);
+  border-radius: 2px;
+  box-shadow:
+    0 1.5px 2px rgba(0,0,0,.55),
+    inset 0 0 0 .5px rgba(0,0,0,.35);
+  transform-origin: top center;
+}
+body[data-tv-theme="predicta"] .tv-feet::before {
+  transform: rotate(-18deg);
+  margin-left: 12%;
+}
+body[data-tv-theme="predicta"] .tv-feet::after {
+  transform: rotate( 18deg);
+  margin-right: 12%;
+}
+
+
+/* =============================================================
+   7) BAKELITE · 1946 美式电木桌面圆屏 (RCA 630-TS / DuMont)
+   -------------------------------------------------------------
+   设计依据 (1946-1950 实机):
+     - RCA Model 630-TS       (1946, 圆 10" CRT, 电木壳)
+     - DuMont "Inputron"       (1946-48, 大调谐盘)
+     - Admiral 19A11           (1948, 黄铜铭牌)
+   视觉 DNA (与既有 6 套主题完全不重叠):
+     ┌─ 形态     : 矮胖桌面式, 圆形 CRT + 偏置大调谐盘 (1940s 标志)
+     │              (predicta 是颈支座悬屏 / classic 是 70s 木箱, 完全不同)
+     ├─ 主体     : 深棕电木 (Bakelite) 高反光树脂 + 细微纹路
+     ├─ 屏幕     : 圆形遮罩 (椭圆形可视区, 四角全黑)
+     ├─ 屏框     : 厚黄铜环 + 内黑唇 (复古车床纹)
+     ├─ 调谐盘   : 屏右大圆铬盘 (VHF 2-13 环刻度 + 红指针)
+     │              是本主题视觉核心 (高占比)
+     ├─ 喇叭     : 黄铜菱形丝网格栅 (与现有任何主题纹理都不同)
+     ├─ 品牌     : 屏下方金色 Art-Deco "胜利" 楷书铭牌
+     ├─ 按钮     : 小型电木旋钮风 (BASS / TONE / VOLUME)
+     ├─ 电源     : 黄铜机械翘板开关
+     └─ 屏幕     : 保持彩色画面 (不做 grayscale, 区别于 trinitron)
+   ============================================================= */
+
+body[data-tv-theme="bakelite"] {
+  --tv-cream:      #3a2210;          /* 主电木深棕 */
+  --tv-cream-hi:   #6a3e1c;          /* 高反光高光 */
+  --tv-cream-lo:   #1c1006;          /* 阴影 */
+  --tv-cream-sh:   #0a0502;
+  --tv-grille:     #1a0e04;
+  --tv-grille-hole:#050201;
+  --tv-led:        #ffb13a;          /* 琥珀色指示灯 */
+  --tv-led-glow:   #ffd56a;
+  --tv-knob:       #1a0e04;
+  --tv-knob-hi:    #6a3e1c;
+  --tv-knob-rim:   #c89a4a;          /* 黄铜环 */
+  --tv-brand-fg:   #f5c850;          /* 黄铜金 */
+  --tv-btn-bg-hi:  #6a3e1c;
+  --tv-btn-bg:     #3a2210;
+  --tv-btn-bg-lo:  #1a0e04;
+  --tv-btn-text:   #f5c850;
+  --tv-btn-label:  #c89a4a;
+  --tv-room-bg:    radial-gradient(ellipse at 50% 38%, #2a1808 0%, #0e0804 60%, #020101 100%);
+  --tv-shell-aspect: 1.55;
+}
+
+/* —— 隐藏不属于此主题的元素 ——————————————————————————— */
+body[data-tv-theme="bakelite"] .tv-antennae      { display: none; }
+body[data-tv-theme="bakelite"] .tv-feet          { display: none; }   /* 桌面式无脚 */
+body[data-tv-theme="bakelite"] .screen-nameplate { display: none; }
+
+/* =============================================================
+   机身: 深棕电木 + 高反光树脂 + 细微纹路 + 圆角钝矩形
+   ============================================================= */
+body[data-tv-theme="bakelite"] .tv-body {
+  position: relative;
+  border-radius: clamp(16px, 2.4vw, 30px);
+  padding: clamp(16px, 2.4vw, 32px);
+  background:
+    /* 顶部强反射弧 (树脂高反光特征) */
+    radial-gradient(ellipse 80% 25% at 50% 0%,
+      rgba(255,200,140,.22) 0%,
+      rgba(255,200,140,.08) 40%,
+      transparent 80%),
+    /* 侧向反射条 */
+    linear-gradient(108deg,
+      rgba(255,180,120,.10) 0%,
+      transparent 18%,
+      transparent 75%,
+      rgba(255,180,120,.06) 92%,
+      transparent 100%),
+    /* 主电木树脂深棕渐变 */
+    radial-gradient(ellipse at 35% 25%,
+      #5a3418 0%, #3a2210 35%, #1c1006 75%, #0a0502 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,200,140,.35),
+    inset 0 -3px 0 rgba(0,0,0,.8),
+    inset 0 0 0 2px rgba(0,0,0,.55),
+    inset 0 0 0 3px rgba(200,154,74,.18),    /* 内沿黄铜细线 */
+    0 18px 38px rgba(0,0,0,.85),
+    0 6px 12px rgba(0,0,0,.5);
+}
+/* 电木树脂纹路 (用 SVG turbulence 替换默认噪点为更细密的木质纹) */
+body[data-tv-theme="bakelite"] .tv-body::before {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='turbulence' baseFrequency='0.012 1.2' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0.05  0 0 0 0 0.02  0 0 0 0 0  0 0 0 0.45 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+  opacity: .55;
+  mix-blend-mode: multiply;
+}
+/* 顶部黄铜机型铭牌缝隙 */
+body[data-tv-theme="bakelite"] .tv-body::after {
+  display: block;
+  position: absolute;
+  left: 18%; right: 18%;
+  top: clamp(8px, 1vw, 14px);
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%, #c89a4a 18%, #f5c850 50%, #c89a4a 82%, transparent 100%);
+  box-shadow:
+    0 1px 0 rgba(0,0,0,.6),
+    0 0 4px rgba(245,200,80,.35);
+  border-radius: 1px;
+  z-index: 2;
+}
+
+/* =============================================================
+   屏框: 厚黄铜环 + 圆形遮罩 (椭圆形可视区)
+   - tv-screen-frame 居中, 比例近 4:3
+   - tv-screen 通过 mask 形成圆角遮罩 + 黑色四角
+   ============================================================= */
+body[data-tv-theme="bakelite"] .tv-screen-frame {
+  position: relative;
+  padding: clamp(12px, 1.8vw, 26px);
+  /* 内黑唇 */
+  background: radial-gradient(ellipse at 50% 35%, #14080a 0%, #050201 100%);
+  border-radius: 50% / 42%;            /* 椭圆形屏框 (1940s CRT) */
+  box-shadow:
+    /* 多层黄铜环 (亮金-暗金-亮金 模拟车床纹) */
+    0 0 0 3px #1c1006,
+    0 0 0 5px #c89a4a,
+    0 0 0 6px #f5c850,
+    0 0 0 8px #8a6418,
+    0 0 0 9px #2a1808,
+    inset 0 0 18px rgba(0,0,0,.92),
+    inset 0 0 0 1px rgba(245,200,80,.25),
+    0 6px 14px rgba(0,0,0,.7);
+}
+/* 黄铜环车床纹高光带 */
+body[data-tv-theme="bakelite"] .tv-screen-frame::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  background:
+    /* 顶部强环境光 */
+    radial-gradient(ellipse at 50% 0%,
+      rgba(255,235,180,.25) 0%,
+      transparent 35%),
+    /* 60° 高光弧 */
+    conic-gradient(from 200deg at 50% 50%,
+      transparent 0deg,
+      rgba(255,235,180,.20) 30deg,
+      transparent 60deg,
+      transparent 360deg);
+  pointer-events: none;
+  z-index: 1;
+}
+/* 屏幕: 椭圆形遮罩 (圆 CRT 经典效果, 四角强 vignette) */
+body[data-tv-theme="bakelite"] .tv-screen {
+  border-radius: 50% / 42%;
+  box-shadow:
+    inset 0 0 0 3px #000,
+    inset 0 0 22px rgba(0,0,0,.85),
+    inset 0 0 80px rgba(0,0,0,.55),
+    0 0 0 1.5px #14080a;
+}
+/* 视频本体: 保持彩色 (不做 grayscale, 这是与 trinitron 的关键区别) */
+body[data-tv-theme="bakelite"] .tv-screen > video {
+  filter: saturate(.92) contrast(1.04) brightness(.97);
+}
+/* 圆 CRT 表面琥珀偏色暖光层 (P22 phosphor 微染) */
+body[data-tv-theme="bakelite"] .tv-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(255,220,160,.06) 0%,
+      rgba(180,130,80,.10) 65%,
+      rgba(0,0,0,.35) 100%);
+  mix-blend-mode: screen;
+  border-radius: inherit;
+}
+
+/* =============================================================
+   品牌大徽: 屏下方金色 Art-Deco "胜利" 楷书铭牌
+   ============================================================= */
+body[data-tv-theme="bakelite"] .tv-brand-badge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(6px, .8vw, 12px);
+  position: absolute;
+  left: 50%;
+  bottom: clamp(8px, 1.4vw, 18px);
+  transform: translateX(-50%);
+  z-index: 4;
+  padding: 5px 18px;
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, #2a1808 0%, #0e0502 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,200,120,.22),
+    inset 0 -1px 1px rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(200,154,74,.55),     /* 黄铜内描边 */
+    0 2px 4px rgba(0,0,0,.6);
+  pointer-events: none;
+}
+body[data-tv-theme="bakelite"] .tv-brand-badge .badge-cn { font-size: 0; }
+body[data-tv-theme="bakelite"] .tv-brand-badge .badge-cn::before {
+  content: "胜利";
+  font-family: "STKaiti", "KaiTi", "FangSong", "SimSun", serif;
+  font-weight: 900;
+  font-size: clamp(13px, 1.5vw, 19px);
+  letter-spacing: 4px;
+  background: linear-gradient(180deg,
+    #fff0b8 0%, #f5c850 50%, #8a5e10 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 0 rgba(0,0,0,.65);
+}
+body[data-tv-theme="bakelite"] .tv-brand-badge .badge-en { font-size: 0; }
+body[data-tv-theme="bakelite"] .tv-brand-badge .badge-en::before {
+  content: "VICTOR · TELEVISION";
+  font-family: "Times New Roman", "Georgia", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(7px, .72vw, 9px);
+  letter-spacing: 2.5px;
+  color: #c89a4a;
+  text-shadow: 0 1px 0 rgba(0,0,0,.6);
+}
+
+/* =============================================================
+   侧栏: 大调谐盘主导 + 菱形丝网喇叭 + 翘板开关
+   - 通过 column 内的顺序: ch-display(调谐盘) -> speaker -> btn -> info
+   ============================================================= */
+body[data-tv-theme="bakelite"] .tv-sidepanel {
+  flex: 0 0 clamp(150px, 22%, 240px);
+  flex-direction: column;
+  gap: clamp(8px, 1.2vh, 16px);
+  padding: clamp(10px, 1.6vw, 22px) clamp(10px, 1.4vw, 18px);
+  /* 嵌入电木壳的凹槽 (内沿暗化) */
+  background:
+    radial-gradient(ellipse at 50% 0%,
+      rgba(255,200,140,.10) 0%, transparent 35%),
+    linear-gradient(180deg,
+      #2a1808 0%, #1a0e04 50%, #0a0502 100%);
+  border-radius: clamp(10px, 1.6vw, 18px);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.9),
+    inset 0 -1px 0 rgba(255,200,140,.18),
+    inset 0 0 0 1px rgba(200,154,74,.32),     /* 黄铜内描边 */
+    0 2px 4px rgba(0,0,0,.5);
+}
+
+/* —— 大调谐盘 (核心): 把 ch-display 改成大圆铬盘 —————— */
+body[data-tv-theme="bakelite"] .ch-display {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: clamp(95px, 11vw, 170px);
+  margin: 4px auto 0;
+  padding: 0;
+  border-radius: 50%;
+  /* 外圈: VHF 2-13 等分 12 刻度 */
+  background:
+    repeating-conic-gradient(from -15deg,
+      rgba(0,0,0,.55) 0deg,
+      rgba(0,0,0,.55) 1.4deg,
+      transparent 1.4deg,
+      transparent 30deg),
+    /* 内圈: 拉丝铬主体 */
+    repeating-conic-gradient(from 0deg,
+      rgba(255,255,255,.0) 0deg,
+      rgba(255,255,255,.12) 8deg,
+      rgba(0,0,0,.08) 16deg,
+      rgba(255,255,255,.0) 24deg),
+    radial-gradient(circle at 32% 28%,
+      #f0f3f8 0%, #c8ccd2 35%, #6a6d72 75%, #2a2c30 100%);
+  box-shadow:
+    /* 黄铜外环 */
+    0 0 0 2px #1c1006,
+    0 0 0 4px #c89a4a,
+    0 0 0 5px #f5c850,
+    0 0 0 7px #8a6418,
+    0 0 0 8px #1a0e04,
+    /* 内阴影 */
+    inset 0 2px 3px rgba(255,255,255,.45),
+    inset 0 -4px 6px rgba(0,0,0,.6),
+    inset 0 0 0 1.5px rgba(0,0,0,.55),
+    0 3px 8px rgba(0,0,0,.7);
+}
+/* 调谐盘中央按盖 (黑电木) */
+body[data-tv-theme="bakelite"] .ch-display::before {
+  content: "";
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%,
+      #4a2c14 0%, #2a1808 50%, #0a0502 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,200,140,.25),
+    inset 0 -2px 3px rgba(0,0,0,.8),
+    0 0 0 1px rgba(200,154,74,.5),             /* 黄铜内圈 */
+    0 0 0 2px #1a0e04;
+}
+/* 调谐盘红色指针 (12 点位置) */
+body[data-tv-theme="bakelite"] .ch-display::after {
+  content: "";
+  position: absolute;
+  top: 3%;
+  left: 50%;
+  width: 3px;
+  height: 24%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg,
+    #ffb09a 0%, #ff2418 50%, #a0080a 100%);
+  border-radius: 2px;
+  box-shadow:
+    0 0 4px rgba(255,40,20,.85),
+    0 1px 1px rgba(0,0,0,.5);
+  z-index: 2;
+}
+/* 调谐盘中央 "CH" + 频道号 (琥珀色) */
+body[data-tv-theme="bakelite"] .ch-display .ch-prefix {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  font-size: clamp(7px, .68vw, 9px);
+  color: #f5c850;
+  opacity: .85;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 4px rgba(245,200,80,.5), 0 1px 0 #000;
+}
+body[data-tv-theme="bakelite"] .ch-display .ch-num {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  font-family: "Consolas", "Courier New", monospace;
+  font-weight: 700;
+  font-size: clamp(17px, 1.85vw, 28px);
+  color: #ffd56a;
+  text-shadow:
+    0 0 6px rgba(255,200,80,.85),
+    0 0 14px rgba(255,200,80,.4),
+    0 1px 0 #000;
+  letter-spacing: 1px;
+  min-width: auto;
+}
+
+/* —— ch-info -> 简化为调谐盘下方的双行琥珀小条 —————— */
+body[data-tv-theme="bakelite"] .ch-info {
+  padding: 4px 8px;
+  background: linear-gradient(180deg, #14080a 0%, #050201 100%);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,.9),
+    inset 0 0 0 1px rgba(200,154,74,.35),
+    0 1px 0 rgba(200,154,74,.18);
+}
+body[data-tv-theme="bakelite"] .ch-info .ch-info-lbl {
+  color: #c89a4a;
+  opacity: .7;
+  font-size: clamp(7px, .65vw, 9px);
+  letter-spacing: 1.5px;
+}
+body[data-tv-theme="bakelite"] .ch-info .now-name,
+body[data-tv-theme="bakelite"] .ch-info .src-info {
+  color: #ffd56a;
+  text-shadow: 0 0 4px rgba(255,200,80,.5), 0 1px 0 #000;
+  font-size: clamp(9px, .88vw, 11px);
+}
+
+/* —— LED row: 琥珀色指示灯 —— */
+body[data-tv-theme="bakelite"] .led {
+  background: radial-gradient(circle at 30% 30%,
+    #fff0b8 0%, #ffb13a 35%, #8a5e10 70%, #2a1808 100%);
+  box-shadow:
+    0 0 8px rgba(255,180,40,.85),
+    0 0 16px rgba(255,180,40,.35),
+    inset 0 1px 0 rgba(255,255,255,.5);
+}
+body[data-tv-theme="bakelite"] .led-text {
+  color: #c89a4a;
+  text-shadow: 0 1px 0 rgba(0,0,0,.7);
+  letter-spacing: 1.5px;
+}
+
+/* —— 喇叭: 黄铜菱形丝网格栅 (1940s 织物-金属混合) —— */
+body[data-tv-theme="bakelite"] .speaker {
+  flex: 1 1 auto;
+  min-height: clamp(45px, 7vh, 95px);
+  border-radius: 3px;
+  background-color: #1a0e04;
+  /* 菱形丝网 = 两层 45°/-45° 交叉线 */
+  background-image:
+    repeating-linear-gradient( 45deg,
+      rgba(245,200,80,.35) 0px,
+      rgba(245,200,80,.35) .8px,
+      transparent .8px,
+      transparent 5px),
+    repeating-linear-gradient(-45deg,
+      rgba(245,200,80,.35) 0px,
+      rgba(245,200,80,.35) .8px,
+      transparent .8px,
+      transparent 5px),
+    /* 后景深色织物 */
+    radial-gradient(ellipse at 50% 50%,
+      #2a1808 0%, #0a0502 100%);
+  box-shadow:
+    /* 黄铜外框 */
+    inset 0 0 0 1.5px #1a0e04,
+    inset 0 0 0 3px #c89a4a,
+    inset 0 0 0 4px #f5c850,
+    inset 0 0 0 5px #8a6418,
+    inset 0 2px 4px rgba(0,0,0,.85),
+    inset 0 -1px 0 rgba(255,200,140,.10);
+}
+
+/* —— 小旋钮组: 电木质感 BASS / VOLUME (复用 knob, 缩小) —— */
+body[data-tv-theme="bakelite"] .knob-cluster {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: clamp(6px, .8vw, 12px);
+  padding: 4px 0 10px;
+}
+body[data-tv-theme="bakelite"] .knob {
+  --knob-size: clamp(28px, 3.4vw, 44px);
+  background:
+    /* 中心黑电木 */
+    radial-gradient(circle, #2a1808 0%, #1a0e04 45%, #0a0502 60%, transparent 61%),
+    /* 黄铜环 */
+    radial-gradient(circle at 30% 28%,
+      #f5c850 0%, #c89a4a 45%, #6a4218 100%);
+  box-shadow:
+    0 0 0 1px #1a0e04,
+    inset 0 1.5px 1px rgba(255,235,180,.4),
+    inset 0 -2px 3px rgba(0,0,0,.7),
+    0 2px 4px rgba(0,0,0,.7);
+}
+body[data-tv-theme="bakelite"] .knob .knob-cap { display: none; }
+body[data-tv-theme="bakelite"] .knob .knob-pointer {
+  /* 一道黄铜小指针在边缘 */
+  background: linear-gradient(180deg, #ffd56a 0%, #8a5e10 100%);
+  box-shadow: 0 0 2px rgba(245,200,80,.7);
+}
+body[data-tv-theme="bakelite"] .knob .knob-label {
+  bottom: -13px;
+  font-family: "Times New Roman", "Georgia", serif;
+  font-style: italic;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #c89a4a;
+  text-shadow: 0 1px 0 rgba(0,0,0,.7);
+}
+body[data-tv-theme="bakelite"] .knob.knob-tuner .knob-label { font-size: 0; }
+body[data-tv-theme="bakelite"] .knob.knob-tuner .knob-label::before {
+  content: "TONE";
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #c89a4a;
+}
+body[data-tv-theme="bakelite"] .knob.knob-volume .knob-label { font-size: 0; }
+body[data-tv-theme="bakelite"] .knob.knob-volume .knob-label::before {
+  content: "VOLUME";
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #c89a4a;
+}
+
+/* —— 按钮组: 黄铜机械翘板风 (2 列) —— */
+body[data-tv-theme="bakelite"] .btn-cluster {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+body[data-tv-theme="bakelite"] .btn-phys {
+  min-height: 26px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  /* 翘板基底: 黄铜深刻字面板 */
+  background:
+    linear-gradient(180deg,
+      #6a4218 0%, #3a2210 45%, #1a0e04 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,200,120,.35),
+    inset 0 -1.5px 0 rgba(0,0,0,.7),
+    inset 0 0 0 1px rgba(200,154,74,.45),     /* 黄铜内描边 */
+    0 1px 2px rgba(0,0,0,.7);
+}
+body[data-tv-theme="bakelite"] .btn-phys.btn-ch {
+  background: linear-gradient(180deg,
+    #8a5a20 0%, #4a2c10 50%, #1a0e04 100%);
+}
+body[data-tv-theme="bakelite"] .btn-phys.btn-src {
+  background: linear-gradient(180deg,
+    #4a2c10 0%, #2a1808 50%, #0a0502 100%);
+}
+body[data-tv-theme="bakelite"] .btn-phys .btn-label {
+  color: #c89a4a;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  text-shadow: 0 -1px 0 rgba(0,0,0,.8), 0 1px 0 rgba(255,200,120,.15);
+}
+body[data-tv-theme="bakelite"] .btn-phys .btn-glyph {
+  color: #f5c850;
+  text-shadow: 0 1px 0 rgba(0,0,0,.8), 0 0 3px rgba(245,200,80,.25);
+}
+/* 电源键: 黄铜机械翘板 (横跨整行) */
+body[data-tv-theme="bakelite"] .btn-phys.btn-power {
+  grid-column: 1 / -1;
+  min-height: 30px;
+  border-radius: 4px;
+  background:
+    /* 翘板顶部金属凸条 */
+    linear-gradient(180deg,
+      #f5c850 0%, #c89a4a 8%, #6a4218 12%, #3a2210 60%, #1a0e04 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,235,180,.55),
+    inset 0 -2px 0 rgba(0,0,0,.7),
+    inset 0 0 0 1px rgba(200,154,74,.55),
+    0 1px 2px rgba(0,0,0,.7),
+    0 0 8px rgba(245,200,80,.15);
+}
+body[data-tv-theme="bakelite"] .btn-phys.btn-power .btn-glyph {
+  color: #ffd56a;
+  text-shadow: 0 1px 0 rgba(0,0,0,.85), 0 0 4px rgba(245,200,80,.4);
+}
+body[data-tv-theme="bakelite"] .btn-phys.btn-power .btn-label { color: #ffe89a; }
+
+/* —— msg-strip / model-tag —— */
+body[data-tv-theme="bakelite"] .msg-strip {
+  background: rgba(20,8,4,.75);
+  border-color: rgba(200,154,74,.5);
+  color: #ffd56a;
+  text-shadow: 0 0 4px rgba(245,200,80,.4);
+}
+body[data-tv-theme="bakelite"] .model-tag {
+  color: #8a6418;
+  font-family: "Times New Roman", "Georgia", serif;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 0 rgba(0,0,0,.7);
+}
+
+
+/* =============================================================
+   窄屏适配 (predicta / bakelite)
+   ============================================================= */
+@media (max-width: 720px) {
+  /* Predicta: 底座纵向堆叠, 屏继续在顶部悬浮 */
+  body[data-tv-theme="predicta"] .tv-sidepanel {
+    width: 92%;
+    flex-wrap: wrap;
+  }
+  body[data-tv-theme="predicta"] .btn-cluster {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  body[data-tv-theme="predicta"] .btn-phys.btn-power {
+    grid-column: span 4;
+  }
+  body[data-tv-theme="predicta"] .tv-screen-frame {
+    width: 92%;
+  }
+  /* Bakelite: 调谐盘缩小避免占满屏 */
+  body[data-tv-theme="bakelite"] .ch-display {
+    max-width: clamp(70px, 22vw, 110px);
+  }
+  body[data-tv-theme="bakelite"] .tv-sidepanel {
+    flex: 0 0 clamp(120px, 30%, 180px);
   }
 }

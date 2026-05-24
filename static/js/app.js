@@ -31,7 +31,6 @@
   // 默认 OSD 渲染目标重置为 "--"（防止所有侧栏初始状态不一致）
   if (nowNameEl) nowNameEl.textContent = "--";
   const closeEl    = $("#closePlayer");
-  const exitEl     = $("#exitPlayer");
   const reloadEl   = $("#reloadStream");
   const prevSrcEl  = $("#prevSrc");
   const nextSrcEl  = $("#nextSrc");
@@ -60,14 +59,13 @@
   // 主题切换
   // -------------------------------------------------------------
   const THEME_KEY = "oldtv.theme";
-  const VALID_THEMES = ["classic", "panda", "changhong", "trinitron"];
+  const VALID_THEMES = ["classic", "panda", "changhong", "trinitron", "mudan", "predicta", "bakelite"];
 
   function applyTheme(name) {
     if (!VALID_THEMES.includes(name)) name = "panda";
     document.body.setAttribute("data-tv-theme", name);
-    $$(".theme-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.theme === name);
-    });
+    const sel = $("#themeSelect");
+    if (sel && sel.value !== name) sel.value = name;
     try { localStorage.setItem(THEME_KEY, name); } catch (e) {}
   }
 
@@ -75,23 +73,29 @@
     let saved = "panda";
     try { saved = localStorage.getItem(THEME_KEY) || "panda"; } catch (e) {}
     applyTheme(saved);
-    $$(".theme-btn").forEach(btn => {
-      btn.addEventListener("click", () => applyTheme(btn.dataset.theme));
-    });
+    const sel = $("#themeSelect");
+    if (sel) sel.addEventListener("change", () => applyTheme(sel.value));
   }
 
   // -------------------------------------------------------------
   // CRT 特效切换引擎
   // -------------------------------------------------------------
   const FX_KEY = "oldtv.fx";
-  const VALID_FX = ["none", "crt", "scanlines", "phosphor", "snow", "vcr"];
+  const VALID_FX = [
+    "none", "crt", "scanlines", "phosphor", "snow", "vcr",
+    // 新增高质量复古特效（与 CSS body[data-tv-fx="..."] 一一对应）
+    "bulge",     // 球面显像管：强 vignette + 边缘色散
+    "tracking",  // VHS 跟踪带：横向噪声条 + 水平抖动
+    "composite", // NTSC 复合信号：强色散 + 重影
+    "crtmax",    // CRT 全开：扫描线 + 磷光 + 泛光全部最强
+    "bw",        // 黑白电视：灰阶 + 冷蓝调 + 颗粒
+  ];
 
   function applyFx(name) {
     if (!VALID_FX.includes(name)) name = "crt";
     document.body.setAttribute("data-tv-fx", name);
-    $$(".fx-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.fx === name);
-    });
+    const sel = $("#fxSelect");
+    if (sel && sel.value !== name) sel.value = name;
     try { localStorage.setItem(FX_KEY, name); } catch (e) {}
   }
 
@@ -99,9 +103,60 @@
     let saved = "crt";
     try { saved = localStorage.getItem(FX_KEY) || "crt"; } catch (e) {}
     applyFx(saved);
-    $$(".fx-btn").forEach(btn => {
-      btn.addEventListener("click", () => applyFx(btn.dataset.fx));
-    });
+    const sel = $("#fxSelect");
+    if (sel) sel.addEventListener("change", () => applyFx(sel.value));
+  }
+
+  // -------------------------------------------------------------
+  // CRT 事件动画 (Part B): 开机 / 关机 / 换台 / 信号花屏
+  // ---------------------------------------------------------------
+  // 实现完全在 CSS 端 (style.css 的 .fx-power-off / .fx-power-on /
+  // .fx-ch-flash / .fx-static)，本模块只负责在合适事件处加/去 class。
+  // 与 fx 下拉（data-tv-fx）正交，互不影响。
+  // -------------------------------------------------------------
+  const CRT_FX_CLASSES = ["fx-power-off", "fx-power-on", "fx-ch-flash", "fx-static"];
+  const CRT_POWER_MS = 560;   // 关机/开机动画时长 (与 CSS .55s 同步, +10ms 余量)
+  const CRT_FLASH_MS = 360;   // 换台白闪时长
+
+  function clearCrtFx() {
+    if (!screenEl) return;
+    CRT_FX_CLASSES.forEach((c) => screenEl.classList.remove(c));
+  }
+
+  /** 强制重启动画：先移除 class -> reflow -> 再加 class */
+  function restartClass(el, cls, ms) {
+    if (!el) return;
+    el.classList.remove(cls);
+    // eslint-disable-next-line no-unused-expressions
+    void el.offsetWidth;
+    el.classList.add(cls);
+    if (ms) setTimeout(() => el.classList.remove(cls), ms);
+  }
+
+  function playPowerOn() {
+    if (!screenEl) return;
+    restartClass(screenEl, "fx-power-on", CRT_POWER_MS);
+  }
+
+  /** 关机收缩：动画结束后回调（用于真正销毁 hls + 隐藏播放器） */
+  function playPowerOff(done) {
+    if (!screenEl) { if (done) done(); return; }
+    // 关机期间不应叠加其它瞬时动画
+    screenEl.classList.remove("fx-power-on", "fx-ch-flash", "fx-static");
+    restartClass(screenEl, "fx-power-off", CRT_POWER_MS);
+    setTimeout(() => {
+      if (done) done();
+    }, CRT_POWER_MS);
+  }
+
+  function playChFlash() {
+    if (!screenEl) return;
+    restartClass(screenEl, "fx-ch-flash", CRT_FLASH_MS);
+  }
+
+  function setStatic(on) {
+    if (!screenEl) return;
+    screenEl.classList.toggle("fx-static", !!on);
   }
 
   // -------------------------------------------------------------
@@ -269,8 +324,14 @@
       currentPlaylist = [ch];
       currentChannelIdx = 0;
     }
+    const wasHidden = playerEl.classList.contains("hidden");
     playerEl.classList.remove("hidden");
     document.body.style.overflow = "hidden";
+    if (wasHidden) {
+      // 首次打开播放器 -> CRT 开机展开动画
+      clearCrtFx();
+      playPowerOn();
+    }
     bootChannel(ch);
   }
 
@@ -282,6 +343,10 @@
     nowNameEl.textContent = ch.name;
     updateChDisplay();
     updateChBtnState();
+    // 切台白闪 (开机动画进行中时跳过，避免双层闪烁)
+    if (screenEl && !screenEl.classList.contains("fx-power-on")) {
+      playChFlash();
+    }
     startStream();
   }
 
@@ -333,6 +398,9 @@
     resetScreenAspect();
     showMsg(`正在连接源 ${currentSrcIdx + 1}/${currentChannel.plays.length}…`);
 
+    // 连接期间显示信号花屏 (强化版 crt-snow)
+    setStatic(true);
+
     playingListener = function () {
       playingListener = null;
       if (videoEl.videoWidth === 0 && videoEl.videoHeight === 0) {
@@ -341,6 +409,7 @@
         return;
       }
       hideMsg();
+      setStatic(false);   // 成功播放 -> 撤掉花屏
       autoFallbackTried = 0;
     };
     videoEl.addEventListener("playing", playingListener, { once: true });
@@ -389,6 +458,7 @@
     } else {
       showMsg(`所有 ${total} 个源都无法播放。可能为版权 / 地域限制 / 源失效。`, false);
       destroyHls();
+      setStatic(true);    // 全源失败 -> 常驻信号花屏
     }
   }
 
@@ -434,7 +504,8 @@
     }
   }
 
-  function closePlayer() {
+  /** 真正销毁播放器状态（关机动画结束后调用） */
+  function finalizeClose() {
     destroyHls();
     playerEl.classList.add("hidden");
     exitFullscreen();
@@ -447,8 +518,19 @@
     if (chNumEl)   chNumEl.textContent   = "--";
     if (nowNameEl) nowNameEl.textContent = "--";
     if (srcInfoEl) srcInfoEl.textContent = "--";
+    clearCrtFx();
     resetScreenAspect();
     hideMsg();
+  }
+
+  let closing = false;
+  function closePlayer() {
+    if (!playerEl || playerEl.classList.contains("hidden") || closing) return;
+    closing = true;
+    // 关机动画期间立即静音/暂停，避免坍缩期间还有声音播出；
+    // 真正的 hls 销毁延迟到动画结束，保证视觉收缩过程能看到最后一帧。
+    try { videoEl.pause(); } catch (e) {}
+    playPowerOff(() => { finalizeClose(); closing = false; });
   }
 
   function exitFullscreen() {
@@ -464,7 +546,6 @@
   searchEl.addEventListener("input", renderGrid);
   refreshEl.addEventListener("click", () => loadChannels(true));
   closeEl.addEventListener("click", closePlayer);
-  if (exitEl) exitEl.addEventListener("click", closePlayer);
   reloadEl.addEventListener("click", () => { autoFallbackTried = 0; startStream(); });
   prevSrcEl.addEventListener("click", () => switchSrc(-1));
   nextSrcEl.addEventListener("click", () => switchSrc(+1));

@@ -174,6 +174,35 @@ def normalize_key(name: str) -> str:
     return re.sub(r"[\s\-_]+", "", name).lower()
 
 
+# ---------------------------------------------------------------------------
+# 自然排序键（用于 UI 内的频道展示顺序）
+# ---------------------------------------------------------------------------
+# 目标：让 CCTV-1, CCTV-2, ..., CCTV-5+, CCTV-6, ..., CCTV-10, ..., CCTV-13
+# 按"人眼直觉"顺序出现，而不是字典序的 CCTV-1, CCTV-10, CCTV-11, ..., CCTV-2。
+_NAT_SPLIT_RE = re.compile(r"(\d+)")
+
+
+def natural_sort_key(name: str) -> List[Tuple[int, object]]:
+    """把字符串拆成 (非数字段, 数字段) 交替的可比较元组列表。
+
+    - 数字段 → (0, int(value))，整数比较 → "2" < "10"
+    - 文字段 → (1, casefold)，统一大小写
+    例:
+        "CCTV-1"  → [(1,'cctv-'), (0,1)]
+        "CCTV-10" → [(1,'cctv-'), (0,10)]
+        "CCTV-5+" → [(1,'cctv-'), (0,5), (1,'+')]
+    """
+    s = (name or "").casefold()
+    parts = _NAT_SPLIT_RE.split(s)
+    key: List[Tuple[int, object]] = []
+    for i, p in enumerate(parts):
+        if i % 2 == 1:               # 奇数下标是 split 捕获组里的数字段
+            key.append((0, int(p)))
+        elif p:                      # 非空文字段
+            key.append((1, p))
+    return key or [(1, "")]
+
+
 def _classify_group(raw_group: str, name: str) -> str:
     hay = f"{raw_group} {name}"
     for label, keys in GROUP_RULES:
@@ -402,11 +431,21 @@ def load_channels(force_refresh: bool = False) -> List[Channel]:
 
 
 def group_channels(channels: List[Channel]) -> Dict[str, List[Dict]]:
-    """按分类聚合，保留预定义顺序。"""
+    """按分类聚合，保留预定义分组顺序；分组内按频道名自然排序。
+
+    分组内排序使用 `natural_sort_key`，保证：
+        CCTV-1, CCTV-2, ..., CCTV-5, CCTV-5+, CCTV-6, ..., CCTV-13
+    而不是字典序下的 CCTV-1, CCTV-10, CCTV-11, ..., CCTV-2。
+    """
     order = [g for g, _ in GROUP_RULES] + [DEFAULT_GROUP]
     buckets: Dict[str, List[Dict]] = {g: [] for g in order}
     for ch in channels:
         buckets.setdefault(ch.group, []).append(ch.to_dict())
+
+    # 每个分组内部按频道名自然排序（稳定、可重现）
+    for lst in buckets.values():
+        lst.sort(key=lambda d: natural_sort_key(d.get("name", "")))
+
     result: Dict[str, List[Dict]] = {}
     for g in order:
         if buckets.get(g):
